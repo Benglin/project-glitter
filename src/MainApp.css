@@ -1,0 +1,20 @@
+html,
+body {
+    height: 100%;
+}
+
+.canvas-root {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+#canvas-3d {
+    width: 100%;
+    height: 100%;
+}
+
+#gui-root {
+    width: 100%;
+    height: 100%;
+}
