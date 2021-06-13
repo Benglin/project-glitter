@@ -1,0 +1,18 @@
+{
+    "targets": {
+        "debug": {
+            "binaryFile": "public/renderer.wasm",
+            "sourceMap": true,
+            "debug": true
+        },
+        "release": {
+            "binaryFile": "public/renderer.wasm",
+            "sourceMap": true,
+            "optimizeLevel": 3,
+            "shrinkLevel": 1,
+            "converge": false,
+            "noAssert": false
+        }
+    },
+    "options": {}
+}

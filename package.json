@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "@assemblyscript/loader": "^0.19.2",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
         "@testing-library/user-event": "^12.8.3",
@@ -20,7 +21,9 @@
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "asbuild": "asc assembly/index.ts --target debug",
+        "asbuild-prod": "asc assembly/index.ts --target release"
     },
     "eslintConfig": {
         "extends": [
@@ -39,5 +42,8 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "assemblyscript": "^0.19.2"
     }
 }
