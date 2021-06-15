@@ -43,13 +43,4 @@ export class Application {
 
         requestAnimationFrame(renderFrame);
     }
-
-    public concat(a: string, b: string): string {
-        const { joinTwoStrings, __newString, __getString } = this._exports;
-
-        const ptr_a = __newString(a);
-        const ptr_b = __newString(b);
-        const ptr_result = joinTwoStrings(ptr_a, ptr_b);
-        return __getString(ptr_result);
-    }
 }
