@@ -20,68 +20,70 @@ export function joinTwoStrings(a: string, b: string): string {
     return `Joined in WASM: ${a + b}`;
 }
 
-const VERTEX_SHADER_CODE: string = /*glsl*/ `#version 300 es
+const VERTEX_SHADER_CODE: string = /*glsl*/ `
    precision highp float;
  
-   in vec2 position;
+   attribute vec2 position;
  
    void main() {
      gl_Position = vec4( position, 0.0, 1.0 );
    }
  `;
 
-const FRAGMENT_SHADER_CODE: string = /*glsl*/ `#version 300 es
+const FRAGMENT_SHADER_CODE: string = /*glsl*/ `
    precision highp float;
-   out vec4 color;
  
    void main() {
-     color = vec4( 1.0, 0.0, 0.0, 1.0 );
+    gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
    }
  `;
 
-// initialize webgl
-var gl = new WebGLRenderingContext("canvas-3d", "webgl2");
+let gl: WebGLRenderingContext;
+let triangle_data: StaticArray<f32> = [];
+let position_al: GLint;
 
-let vertex_shader: WebGLShader = gl.createShader(gl.VERTEX_SHADER);
-gl.shaderSource(vertex_shader, VERTEX_SHADER_CODE);
-gl.compileShader(vertex_shader);
+export function initializeRenderer(): void {
+    // initialize webgl
+    gl = new WebGLRenderingContext("canvas-3d", "webgl2");
 
-let fragment_shader: WebGLShader = gl.createShader(gl.FRAGMENT_SHADER);
-gl.shaderSource(fragment_shader, FRAGMENT_SHADER_CODE);
-gl.compileShader(fragment_shader);
+    let vertex_shader: WebGLShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertex_shader, VERTEX_SHADER_CODE);
+    gl.compileShader(vertex_shader);
 
-let program: WebGLProgram = gl.createProgram();
+    let fragment_shader: WebGLShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragment_shader, FRAGMENT_SHADER_CODE);
+    gl.compileShader(fragment_shader);
 
-gl.attachShader(program, vertex_shader);
-gl.attachShader(program, fragment_shader);
+    let program: WebGLProgram = gl.createProgram();
 
-gl.linkProgram(program);
+    gl.attachShader(program, vertex_shader);
+    gl.attachShader(program, fragment_shader);
 
-gl.useProgram(program);
+    gl.linkProgram(program);
 
-let buffer: WebGLBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.useProgram(program);
 
-let position_al: GLint = gl.getAttribLocation(program, "position");
-gl.enableVertexAttribArray(position_al);
+    let buffer: WebGLBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
-// prettier-ignore
-let triangle_data: StaticArray<f32> = [
-   0.0,  0.5,
-  -0.5, -0.5,
-   0.5, -0.5,
- ];
+    let position_al: GLint = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(position_al);
+
+    triangle_data = [0.0, 0.5, -0.5, -0.5, 0.5, -0.5];
+}
 
 export function displayLoop(): void {
-    //             R    G    B    A
-    gl.clearColor(0.392, 0.584, 0.929, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    if (gl) {
+        //             R    G    B    A
+        gl.clearColor(0.392, 0.584, 0.929, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-    gl.bufferData<f32>(gl.ARRAY_BUFFER, triangle_data, gl.STATIC_DRAW);
+        gl.bufferData<f32>(gl.ARRAY_BUFFER, triangle_data, gl.STATIC_DRAW);
 
-    //                      attribute | dimensions | data_type | normalize | stride | offset
-    gl.vertexAttribPointer(position_al, 2, gl.FLOAT, +false, 0, 0);
+        //                      attribute | dimensions | data_type | normalize | stride | offset
+        gl.vertexAttribPointer(position_al, 2, gl.FLOAT, +false, 0, 0);
 
-    //                      mode | first vertex | count
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 3);
+        //                      mode | first vertex | count
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 3);
+    }
 }

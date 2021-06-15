@@ -1,6 +1,5 @@
 import loader from "@assemblyscript/loader";
-
-import { initASWebGLue } from "./externals/ASWebGLue.js";
+import { generateGlueCode, patchFromLoaderApi } from "./externals/GlueCode";
 
 export class Application {
     private _exports: any = null;
@@ -22,15 +21,15 @@ export class Application {
             },
         };
 
-        initASWebGLue(imports);
+        generateGlueCode(imports as any);
 
         const response = await fetch("/renderer.wasm");
         const wasmInstance = await loader.instantiateStreaming(response, imports);
         this._exports = wasmInstance.exports;
 
-        imports.WebGL.WEBGL_READY = true;
-        imports.WebGL.RTTI_BASE = wasmInstance.exports["__rtti_base"];
+        patchFromLoaderApi(imports as any, this._exports);
 
+        this._exports.initializeRenderer();
         this._exports.displayLoop();
         return true;
     }
