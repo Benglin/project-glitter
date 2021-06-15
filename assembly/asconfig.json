@@ -1,7 +1,7 @@
 {
     "targets": {
         "debug": {
-            "binaryFile": "public/renderer.wasm",
+            "binaryFile": "../public/renderer.wasm",
             "sourceMap": true,
             "debug": true,
             "importMemory": true,
@@ -9,7 +9,7 @@
             "runtime": "stub"
         },
         "release": {
-            "binaryFile": "public/renderer.wasm",
+            "binaryFile": "../public/renderer.wasm",
             "sourceMap": true,
             "optimizeLevel": 3,
             "shrinkLevel": 1,
