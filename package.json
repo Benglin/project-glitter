@@ -22,8 +22,8 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "asbuild": "asc ./assembly/Renderer.ts --config ./assembly/asconfig.json --target debug",
-        "asbuild-prod": "asc ./assembly/Renderer.ts --config ./assembly/asconfig.json --target release"
+        "asbuild": "asc ./assembly/EntryPoint.ts --config ./assembly/asconfig.json --target debug",
+        "asbuild-prod": "asc ./assembly/EntryPoint.ts --config ./assembly/asconfig.json --target release"
     },
     "eslintConfig": {
         "extends": [

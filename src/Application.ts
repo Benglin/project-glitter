@@ -28,16 +28,19 @@ export class Application {
         this._exports = wasmInstance.exports;
 
         patchFromLoaderApi(imports as any, this._exports);
+        const { __newString } = this._exports;
 
-        this._exports.initializeRenderer();
-        this._exports.displayLoop();
+        const canvasId = __newString("canvas-3d");
+        const contextType = __newString("webgl2");
+        this._exports.initialize(canvasId, contextType);
         return true;
     }
 
     public startRenderLoop(): void {
         const thisObject = this;
         function renderFrame(): void {
-            thisObject._exports.displayLoop();
+            thisObject._exports.updateFrame();
+            thisObject._exports.renderFrame();
             requestAnimationFrame(renderFrame);
         }
 
