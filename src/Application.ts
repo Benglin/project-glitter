@@ -10,6 +10,10 @@ export class Application {
             throw new Error("Application.initialize is called twice");
         }
 
+        const canvas = document.getElementById("canvas-3d") as HTMLCanvasElement;
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+
         const memory = new WebAssembly.Memory({ initial: 100 }); // linear memory
 
         const imports: { [key: string]: any } = {
