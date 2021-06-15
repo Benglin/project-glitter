@@ -1,5 +1,7 @@
 import loader from "@assemblyscript/loader";
 
+import { initASWebGLue } from "./externals/ASWebGLue.js";
+
 export class Application {
     private _exports: any = null;
 
@@ -8,15 +10,35 @@ export class Application {
             throw new Error("Application.initialize is called twice");
         }
 
-        const imports = {
-            env: {},
+        const memory = new WebAssembly.Memory({ initial: 100 }); // linear memory
+
+        const imports: { [key: string]: any } = {
+            env: {
+                memory: memory,
+            },
         };
 
-        const response = await fetch("/renderer.wasm");
-        const { exports } = await loader.instantiateStreaming(response, imports);
-        this._exports = exports;
+        initASWebGLue(imports);
 
+        const response = await fetch("/renderer.wasm");
+        const wasmInstance = await loader.instantiateStreaming(response, imports);
+        this._exports = wasmInstance.exports;
+
+        imports.WebGL.WEBGL_READY = true;
+        imports.WebGL.RTTI_BASE = wasmInstance.exports["__rtti_base"];
+
+        this._exports.displayLoop();
         return true;
+    }
+
+    public startRenderLoop(): void {
+        const thisObject = this;
+        function renderFrame(): void {
+            thisObject._exports.displayLoop();
+            requestAnimationFrame(renderFrame);
+        }
+
+        requestAnimationFrame(renderFrame);
     }
 
     public concat(a: string, b: string): string {

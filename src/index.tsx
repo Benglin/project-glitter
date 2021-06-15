@@ -15,6 +15,7 @@ ReactDOM.render(
 const application = new Application();
 application.initialize().then((result: boolean) => {
     if (result) {
+        application.startRenderLoop();
         const res = application.concat("One", "Two");
         console.log(`${res}`);
     }

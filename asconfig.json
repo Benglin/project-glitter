@@ -4,7 +4,9 @@
             "binaryFile": "public/renderer.wasm",
             "sourceMap": true,
             "debug": true,
-            "exportRuntime": true
+            "importMemory": true,
+            "exportRuntime": true,
+            "runtime": "stub"
         },
         "release": {
             "binaryFile": "public/renderer.wasm",
@@ -13,7 +15,9 @@
             "shrinkLevel": 1,
             "converge": false,
             "noAssert": false,
-            "exportRuntime": true
+            "importMemory": true,
+            "exportRuntime": true,
+            "runtime": "stub"
         }
     },
     "options": {}
