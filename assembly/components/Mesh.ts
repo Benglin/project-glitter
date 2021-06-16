@@ -32,7 +32,7 @@ export class Mesh extends Object3D {
             const normalized = attribute.normalized;
             const stride = 0;
             const offset = 0;
-            const loc = material.getAttributeLocation(attribName);
+            const loc = material.getAttribLocation(attribName);
 
             gl.vertexAttribPointer(loc, itemSize, gl.FLOAT, +normalized, stride, offset);
             gl.enableVertexAttribArray(loc);

@@ -1,14 +1,15 @@
 import { WebGLRenderingContext } from "../externals/WebGL";
 import { BufferAttribute, BufferGeometry } from "./BufferGeometry";
-import { Object3D } from "./Object3D";
 import { Mesh } from "./Mesh";
 import { ShaderMaterial } from "./ShaderMaterial";
 import { float32ArrayFromArray } from "./Utilities";
 
 const vertexShaderCode: string = `
     precision highp float;
+
     attribute vec2 position;
     attribute vec3 color;
+
     varying vec3 vColor;
 
     void  main() {
@@ -19,10 +20,13 @@ const vertexShaderCode: string = `
 
 const fragmentShaderCode: string = `
     precision highp float;
+
+    uniform float alpha;
+
     varying vec3 vColor;
 
     void main() {
-        gl_FragColor = vec4(vColor, 1.0);
+        gl_FragColor = vec4(vColor, alpha);
     }
 `;
 
@@ -34,6 +38,9 @@ export class TestTriangle {
     constructor(gl: WebGLRenderingContext) {
         this._shaderMaterial = new ShaderMaterial(gl);
         this._shaderMaterial.compile(vertexShaderCode, fragmentShaderCode);
+
+        this._shaderMaterial.activate();
+        this._shaderMaterial.setUniform1f("alpha", 0.98);
 
         const pos = [0.0, 0.5, -0.5, -0.5, 0.5, -0.5];
         const positions = float32ArrayFromArray(pos);

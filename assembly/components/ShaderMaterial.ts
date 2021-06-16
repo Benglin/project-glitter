@@ -2,10 +2,12 @@ import { WebGLProgram, WebGLRenderingContext } from "../externals/WebGL";
 import { Object3D } from "./Object3D";
 
 export class ShaderMaterial extends Object3D {
+    private readonly _uniformLocations: Map<string, i32>;
     private _program: WebGLProgram = -1;
 
     constructor(gl: WebGLRenderingContext) {
         super(gl);
+        this._uniformLocations = new Map<string, i32>();
     }
 
     public compile(vertexShaderCode: string, fragmentShaderCode: string): void {
@@ -35,12 +37,26 @@ export class ShaderMaterial extends Object3D {
         }
     }
 
-    public getAttributeLocation(attribName: string): i32 {
+    public getAttribLocation(attribName: string): i32 {
         if (this._program < 0) return -1;
         return this.gl.getAttribLocation(this._program, attribName);
     }
 
-    activate(): void {
+    public setUniform1f(uniformName: string, value: f32): void {
+        if (this._program < 0) {
+            throw new Error(`Invalid program to set uniform: ${uniformName}`);
+        }
+
+        if (!this._uniformLocations.has(uniformName)) {
+            const loc = this.gl.getUniformLocation(this._program, uniformName);
+            this._uniformLocations.set(uniformName, loc);
+        }
+
+        const location = this._uniformLocations.get(uniformName);
+        this.gl.uniform1f(location, value);
+    }
+
+    public activate(): void {
         this.gl.useProgram(this._program);
     }
 }
