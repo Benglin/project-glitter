@@ -1,7 +1,7 @@
 import { WebGLProgram, WebGLRenderingContext } from "../externals/WebGL";
 
 export class ShaderMaterial {
-    private _program: WebGLProgram = 0;
+    private _program: WebGLProgram = -1;
     private readonly _gl: WebGLRenderingContext;
 
     constructor(gl: WebGLRenderingContext) {
@@ -9,7 +9,7 @@ export class ShaderMaterial {
     }
 
     public compile(vertexShaderCode: string, fragmentShaderCode: string): boolean {
-        if (this._program) {
+        if (this._program >= 0) {
             throw new Error(`Material has been compiled before`);
         }
 
@@ -30,11 +30,12 @@ export class ShaderMaterial {
         return true; // TODO: Check compilation status.
     }
 
+    public getAttributeLocation(attribName: string): i32 {
+        if (this._program < 0) return -1;
+        return this._gl.getAttribLocation(this._program, attribName);
+    }
+
     activate(): void {
         this._gl.useProgram(this._program);
-
-        let position_al = this._gl.getAttribLocation(this._program, "position");
-        this._gl.vertexAttribPointer(position_al, 2, this._gl.FLOAT, +false, 0, 0);
-        this._gl.enableVertexAttribArray(position_al);
     }
 }
