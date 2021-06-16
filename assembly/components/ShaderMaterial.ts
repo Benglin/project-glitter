@@ -1,5 +1,6 @@
 import { WebGLProgram, WebGLRenderingContext } from "../externals/WebGL";
 import { Object3D } from "./Object3D";
+import { Texture } from "./Texture";
 
 export class ShaderMaterial extends Object3D {
     private readonly _uniformLocations: Map<string, i32>;
@@ -68,6 +69,12 @@ export class ShaderMaterial extends Object3D {
 
         const location = this._uniformLocations.get(uniformName);
         this.gl.uniform1i(location, value);
+    }
+
+    public bindTexture(texUnitIndex: u32, uniformName: string, texture: Texture): void {
+        this.activate();
+        this.setUniform1i(uniformName, texUnitIndex);
+        texture.activate(texUnitIndex);
     }
 
     public activate(): void {

@@ -79,10 +79,7 @@ export class TestTriangle {
 
     public render(): void {
         if (this._triangleMesh) {
-            this._texture.activate(0);
-            this._shaderMaterial.activate();
-            this._shaderMaterial.setUniform1i("uSampler", 0);
-
+            this._shaderMaterial.bindTexture(0, "uSampler", this._texture);
             this._triangleMesh.render();
         }
     }

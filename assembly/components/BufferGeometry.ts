@@ -1,6 +1,5 @@
 import { WebGLBuffer, WebGLRenderingContext } from "../externals/WebGL";
 import { Object3D } from "./Object3D";
-import { float32ArrayToStatic32Array } from "./Utilities";
 
 export class BufferAttribute {
     protected readonly _itemSize: i32;
