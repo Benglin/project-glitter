@@ -56,6 +56,20 @@ export class ShaderMaterial extends Object3D {
         this.gl.uniform1f(location, value);
     }
 
+    public setUniform1i(uniformName: string, value: i32): void {
+        if (this._program < 0) {
+            throw new Error(`Invalid program to set uniform: ${uniformName}`);
+        }
+
+        if (!this._uniformLocations.has(uniformName)) {
+            const loc = this.gl.getUniformLocation(this._program, uniformName);
+            this._uniformLocations.set(uniformName, loc);
+        }
+
+        const location = this._uniformLocations.get(uniformName);
+        this.gl.uniform1i(location, value);
+    }
+
     public activate(): void {
         this.gl.useProgram(this._program);
     }
