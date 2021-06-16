@@ -40,12 +40,6 @@ export class BufferAttribute {
     }
 }
 
-export class Float32BufferAttribute extends BufferAttribute {
-    constructor(array: Float32Array, itemSize: i32, normalized: boolean) {
-        super(array, itemSize, normalized);
-    }
-}
-
 export class BufferGeometry extends Object3D {
     private _indexBuffer: WebGLBuffer = -1;
     private readonly _buffers: Map<string, WebGLBuffer> = new Map();
