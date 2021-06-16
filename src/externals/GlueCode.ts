@@ -242,6 +242,11 @@ export function generateGlueCode(importObject: ImportObject): void {
         WebGL.contextArray[ctx].activeTexture(texture);
     };
 
+    WebGL.texParameteri = (ctx: number, target: number, pname: number, param: number) => {
+        const context = WebGL.contextArray[ctx];
+        context.texParameteri(target, pname, param);
+    };
+
     WebGL.getAttribLocation = function (ctx: number, program: number, name: number): number {
         return WebGL.contextArray[ctx].getAttribLocation(
             WebGL.programArray[program],
