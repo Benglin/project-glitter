@@ -1,14 +1,14 @@
 interface ImportObject {
     WebGL: {
-        contextArray: any[];
+        contextArray: WebGLRenderingContext[];
         textureArray: any[];
         imageArray: any[];
-        programArray: any[];
-        shaderArray: any[];
-        bufferArray: any[];
+        programArray: WebGLProgram[];
+        shaderArray: WebGLShader[];
+        bufferArray: WebGLBuffer[];
         frameBufferArray: any[];
         renderBufferArray: any[];
-        uniformLocationArray: any[];
+        uniformLocationArray: WebGLUniformLocation[];
         vaoArray: any[];
 
         createContextFromCanvas: (canvasId: number, contextType: number) => number;
@@ -91,9 +91,9 @@ export function generateGlueCode(importObject: ImportObject): void {
 
         if (id === -1) {
             id = WebGL.contextArray.length;
-            WebGL.contextArray.push(gl);
+            WebGL.contextArray.push(gl as WebGLRenderingContext);
         } else {
-            WebGL.contextArray[id] = gl;
+            WebGL.contextArray[id] = gl as WebGLRenderingContext;
         }
 
         return id;
@@ -105,9 +105,9 @@ export function generateGlueCode(importObject: ImportObject): void {
 
         if (id === -1) {
             id = WebGL.shaderArray.length;
-            WebGL.shaderArray.push(shader);
+            WebGL.shaderArray.push(shader as WebGLShader);
         } else {
-            WebGL.shaderArray[id] = shader;
+            WebGL.shaderArray[id] = shader as WebGLShader;
         }
         return id;
     };
@@ -128,9 +128,9 @@ export function generateGlueCode(importObject: ImportObject): void {
 
         if (id === -1) {
             id = WebGL.programArray.length;
-            WebGL.programArray.push(program);
+            WebGL.programArray.push(program as WebGLProgram);
         } else {
-            WebGL.programArray[id] = program;
+            WebGL.programArray[id] = program as WebGLProgram;
         }
 
         return id;
@@ -177,9 +177,9 @@ export function generateGlueCode(importObject: ImportObject): void {
 
         if (id === -1) {
             id = WebGL.bufferArray.length;
-            WebGL.bufferArray.push(buffer);
+            WebGL.bufferArray.push(buffer as WebGLBuffer);
         } else {
-            WebGL.bufferArray[id] = buffer;
+            WebGL.bufferArray[id] = buffer as WebGLBuffer;
         }
 
         return id;
@@ -200,6 +200,28 @@ export function generateGlueCode(importObject: ImportObject): void {
         WebGL.contextArray[ctx].enableVertexAttribArray(index);
     };
 
+    WebGL.getUniformLocation = function (ctx: number, program: number, name: number): number {
+        const context = WebGL.contextArray[ctx];
+        const prog = WebGL.programArray[program];
+
+        let id = WebGL.uniformLocationArray.findIndex((element) => element == null);
+        let loc = context.getUniformLocation(prog, WebGL.__getString(name));
+
+        if (id === -1) {
+            id = WebGL.uniformLocationArray.length;
+            WebGL.uniformLocationArray.push(loc as WebGLUniformLocation);
+        } else {
+            WebGL.uniformLocationArray[id] = loc as WebGLUniformLocation;
+        }
+
+        return id;
+    };
+
+    WebGL.uniform1f = function (ctx: number, loc: number, value: number): void {
+        const location = WebGL.uniformLocationArray[loc];
+        WebGL.contextArray[ctx].uniform1f(location, value);
+    };
+
     // Clears the color, depth and stencil buffers
     WebGL.clear = function (ctx: number, mask: number): void {
         WebGL.contextArray[ctx].clear(mask);
@@ -212,13 +234,12 @@ export function generateGlueCode(importObject: ImportObject): void {
 
     WebGL.viewport = function (
         ctx: number,
-        indx: number,
         x: number,
         y: number,
         width: number,
         height: number
     ): void {
-        WebGL.contextArray[ctx].viewport(indx, x, y, width, height);
+        WebGL.contextArray[ctx].viewport(x, y, width, height);
     };
 
     const bufferdata = function (ctx: number, target: number, data: number, usage: number): void {
@@ -238,7 +259,7 @@ export function generateGlueCode(importObject: ImportObject): void {
         stride: number,
         offset: number
     ): void {
-        WebGL.contextArray[ctx].vertexAttribPointer(indx, size, typ, normalized, stride, offset);
+        WebGL.contextArray[ctx].vertexAttribPointer(indx, size, typ, !!normalized, stride, offset);
     };
 
     WebGL.drawArrays = function (ctx: number, mode: number, first: number, count: number): void {
