@@ -1,8 +1,9 @@
 import { WebGLRenderingContext } from "../externals/WebGL";
 import { BufferAttribute, BufferGeometry } from "./BufferGeometry";
 import { Object3D } from "./Object3D";
+import { Mesh } from "./Mesh";
 import { ShaderMaterial } from "./ShaderMaterial";
-import { float32ArrayFromArray, float32ArrayToStatic32Array } from "./Utilities";
+import { float32ArrayFromArray } from "./Utilities";
 
 const vertexShaderCode: string = `
     precision highp float;
@@ -25,13 +26,12 @@ const fragmentShaderCode: string = `
     }
 `;
 
-export class TestTriangle extends Object3D {
+export class TestTriangle {
     private readonly _geometry: BufferGeometry;
     private readonly _shaderMaterial: ShaderMaterial;
+    private readonly _triangleMesh: Mesh;
 
     constructor(gl: WebGLRenderingContext) {
-        super(gl);
-
         this._shaderMaterial = new ShaderMaterial(gl);
         this._shaderMaterial.compile(vertexShaderCode, fragmentShaderCode);
 
@@ -41,42 +41,18 @@ export class TestTriangle extends Object3D {
         const clrs = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
         const colors = float32ArrayFromArray(clrs);
 
-        this._geometry = new BufferGeometry(this.gl);
+        this._geometry = new BufferGeometry(gl);
         this._geometry.setAttribute("position", new BufferAttribute(positions, 2, false));
         this._geometry.setAttribute("color", new BufferAttribute(colors, 3, false));
+
+        this._triangleMesh = new Mesh(gl, this._geometry, this._shaderMaterial);
     }
 
     public update(deltaMs: f32): void {}
 
     public render(): void {
-        this._todo_TurnThisIntoMeshRender();
-    }
-
-    private _todo_TurnThisIntoMeshRender(): void {
-        const gl = this.gl;
-        const geometry = this._geometry;
-        const material = this._shaderMaterial;
-        const attributes = geometry.attributes;
-
-        for (let i = 0; i < attributes.length; i++) {
-            const attribName = attributes[i];
-            const attribute = geometry.getAttribute(attribName);
-            if (!attribute) return;
-
-            const buffer = geometry.getBuffer(attribName);
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
-            const itemSize = attribute.itemSize;
-            const normalized = attribute.normalized;
-            const stride = 0;
-            const offset = 0;
-            const loc = material.getAttributeLocation(attribName);
-
-            gl.vertexAttribPointer(loc, itemSize, gl.FLOAT, +normalized, stride, offset);
-            gl.enableVertexAttribArray(loc);
+        if (this._triangleMesh) {
+            this._triangleMesh.render();
         }
-
-        this._shaderMaterial.activate();
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 3);
     }
 }
