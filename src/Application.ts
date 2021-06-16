@@ -10,7 +10,7 @@ export class Application {
         }
 
         // A little shortcut
-        const namedImageData = await this._preloadResources("circle.svg");
+        const namedImageData = await this._preloadResources("test.png");
 
         const canvas = document.getElementById("canvas-3d") as HTMLCanvasElement;
         canvas.width = canvas.clientWidth;
@@ -63,12 +63,7 @@ export class Application {
                 const data = context.getImageData(0, 0, image.width, image.height);
 
                 const resources: NamedImageData = {};
-                resources[resourceName] = {
-                    width: data.width,
-                    height: data.height,
-                    data: data.data,
-                };
-
+                resources[resourceName] = data;
                 resolve(resources);
             };
 
