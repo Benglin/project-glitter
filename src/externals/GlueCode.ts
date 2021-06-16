@@ -1,3 +1,5 @@
+import { Application } from "../Application";
+
 interface ImportObject {
     WebGL: {
         contextArray: WebGLRenderingContext[];
@@ -57,6 +59,11 @@ interface ImportObject {
         [key: string]: any;
     };
 
+    Utilities: {
+        getImageDescriptor: (imageId: number) => number;
+    };
+
+    app: Application;
     [key: string]: any;
 }
 
@@ -66,7 +73,10 @@ interface ExportObject {
 
 export function generateGlueCode(importObject: ImportObject): void {
     importObject.WebGL = importObject.WebGL || {};
+    importObject.Utilities = importObject.Utilities || {};
+
     const WebGL = importObject.WebGL;
+    const Utilities = importObject.Utilities;
 
     WebGL.contextArray = [];
     WebGL.textureArray = [];
@@ -264,6 +274,10 @@ export function generateGlueCode(importObject: ImportObject): void {
 
     WebGL.drawArrays = function (ctx: number, mode: number, first: number, count: number): void {
         WebGL.contextArray[ctx].drawArrays(mode, first, count);
+    };
+
+    Utilities.getImageDescriptor = function (imageId: number): number {
+        return importObject.app.getImageDescriptor(imageId);
     };
 }
 
