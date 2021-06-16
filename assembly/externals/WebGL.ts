@@ -899,7 +899,7 @@ export declare function bindVertexArray(gl: WebGLRenderingContextId, array: WebG
 export class WebGLRenderingContext {
 	gl_id: WebGLRenderingContextId;
 
-	@inline constructor(canvas_id: string, context_type: string) {
+	constructor(canvas_id: string, context_type: string) {
 		// constructor needs to create the gl_id
 		this.gl_id = createContextFromCanvas(canvas_id, context_type);
 	}
