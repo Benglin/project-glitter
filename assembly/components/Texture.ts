@@ -7,7 +7,6 @@ export class Texture extends Object3D {
 
     constructor(gl: WebGLRenderingContext) {
         super(gl);
-
         this._texture = gl.createTexture();
     }
 
@@ -22,5 +21,11 @@ export class Texture extends Object3D {
 
         const imageData = getImageDataUtil(imageName);
         gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, imageData);
+    }
+
+    public activate(texUnitIndex: u32): void {
+        const gl = this.gl;
+        gl.activeTexture(gl.TEXTURE0 + texUnitIndex);
+        gl.bindTexture(gl.TEXTURE_2D, this._texture);
     }
 }

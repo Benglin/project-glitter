@@ -5,7 +5,7 @@ export interface NamedImageData {
 interface ImportObject {
     WebGL: {
         contextArray: WebGLRenderingContext[]; // TODO: Use WebGL2RenderingContext
-        textureArray: any[];
+        textureArray: WebGLTexture[];
         imageDataArray: ImageData[];
         programArray: WebGLProgram[];
         shaderArray: WebGLShader[];
@@ -180,7 +180,7 @@ export function generateGlueCode(importObject: ImportObject): void {
         const prog = WebGL.programArray[program];
 
         const message = context.getProgramInfoLog(prog);
-        return this.__newString(message);
+        return WebGL.__newString(message);
     };
 
     WebGL.useProgram = function (ctx: number, program: number): void {
@@ -211,9 +211,9 @@ export function generateGlueCode(importObject: ImportObject): void {
 
         if (id === -1) {
             id = WebGL.textureArray.length;
-            WebGL.textureArray.push(texture);
+            WebGL.textureArray.push(texture as WebGLTexture);
         } else {
-            WebGL.textureArray[id] = texture;
+            WebGL.textureArray[id] = texture as WebGLTexture;
         }
 
         return id;
@@ -233,19 +233,13 @@ export function generateGlueCode(importObject: ImportObject): void {
         typ: number,
         imageId: number
     ): void {
-        const context = WebGL.contextArray[ctx] as WebGL2RenderingContext;
+        const context = WebGL.contextArray[ctx];
         const image = WebGL.imageDataArray[imageId];
-        context.texImage2D(
-            target,
-            level,
-            internalformat,
-            image.width,
-            image.height,
-            0,
-            format,
-            typ,
-            image
-        );
+        context.texImage2D(target, level, internalformat, format, typ, image);
+    };
+
+    WebGL.activeTexture = function (ctx: number, texture: number): void {
+        WebGL.contextArray[ctx].activeTexture(texture);
     };
 
     WebGL.getAttribLocation = function (ctx: number, program: number, name: number): number {
