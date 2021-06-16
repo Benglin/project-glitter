@@ -1729,7 +1729,7 @@ export class WebGLRenderingContext {
 	}
 
 	@inline get TEXTURE_WRAP_S(): GLenum {
-		return LINEAR;
+		return TEXTURE_WRAP_S;
 	}
 
 	@inline get TEXTURE_WRAP_T(): GLenum {
