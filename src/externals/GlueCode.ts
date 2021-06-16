@@ -281,6 +281,11 @@ export function generateGlueCode(importObject: ImportObject): void {
         WebGL.contextArray[ctx].uniform1f(location, value);
     };
 
+    WebGL.uniform1i = function (ctx: number, loc: number, value: number): void {
+        const location = WebGL.uniformLocationArray[loc];
+        WebGL.contextArray[ctx].uniform1i(location, value);
+    };
+
     // Clears the color, depth and stencil buffers
     WebGL.clear = function (ctx: number, mask: number): void {
         WebGL.contextArray[ctx].clear(mask);
