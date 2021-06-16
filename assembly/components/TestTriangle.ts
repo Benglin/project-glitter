@@ -54,13 +54,14 @@ export class TestTriangle {
         this._texture = new Texture(gl);
         this._texture.load("test.png");
 
-        const pos = [0.0, 0.5, -0.5, -0.5, 0.5, -0.5];
+        const d = 0.5;
+        const pos = [-d, d, -d, -d, d, d, d, d, -d, -d, d, -d];
         const positions = float32ArrayFromArray(pos);
 
-        const texCoord = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0];
+        const texCoord = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0];
         const texCoords = float32ArrayFromArray(texCoord);
 
-        const clrs = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
+        const clrs = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
         const colors = float32ArrayFromArray(clrs);
 
         this._geometry = new BufferGeometry(gl);
