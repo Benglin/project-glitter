@@ -1,7 +1,4 @@
 import { Renderer } from "./components/Renderer";
-import { createImageDescriptor, ImageDescriptor } from "./components/Utilities";
-
-export const Uint8ClampedArray_ID = idof<Uint8ClampedArray>();
 
 let renderer: Renderer;
 
@@ -17,5 +14,3 @@ export function updateFrame(): void {
 export function renderFrame(): void {
     renderer.renderFrame();
 }
-
-export { ImageDescriptor, createImageDescriptor };

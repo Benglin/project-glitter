@@ -1,10 +1,12 @@
-import { Application } from "../Application";
+export interface NamedImageData {
+    [key: string]: ImageData;
+}
 
 interface ImportObject {
     WebGL: {
-        contextArray: WebGLRenderingContext[];
+        contextArray: WebGLRenderingContext[]; // TODO: Use WebGL2RenderingContext
         textureArray: any[];
-        imageArray: any[];
+        imageDataArray: ImageData[];
         programArray: WebGLProgram[];
         shaderArray: WebGLShader[];
         bufferArray: WebGLBuffer[];
@@ -60,10 +62,11 @@ interface ImportObject {
     };
 
     Utilities: {
-        getImageDescriptor: (imageId: number) => number;
+        getImageData: (imageName: number) => number;
     };
 
-    app: Application;
+    images: NamedImageData;
+
     [key: string]: any;
 }
 
@@ -80,7 +83,7 @@ export function generateGlueCode(importObject: ImportObject): void {
 
     WebGL.contextArray = [];
     WebGL.textureArray = [];
-    WebGL.imageArray = [];
+    WebGL.imageDataArray = [];
     WebGL.programArray = [];
     WebGL.shaderArray = [];
     WebGL.bufferArray = [];
@@ -129,7 +132,10 @@ export function generateGlueCode(importObject: ImportObject): void {
     WebGL.compileShader = function (ctx: number, shader: number): void {
         WebGL.contextArray[ctx].compileShader(WebGL.shaderArray[shader]);
         const compilationLog = WebGL.contextArray[ctx].getShaderInfoLog(WebGL.shaderArray[shader]);
-        console.log(`compileShader: ${compilationLog}`);
+
+        if (compilationLog && compilationLog.length > 0) {
+            console.log(`compileShader: ${compilationLog}`);
+        }
     };
 
     WebGL.createProgram = function (ctx: number): number {
@@ -197,6 +203,49 @@ export function generateGlueCode(importObject: ImportObject): void {
 
     WebGL.bindBuffer = function (ctx: number, target: number, buffer: number): void {
         WebGL.contextArray[ctx].bindBuffer(target, WebGL.bufferArray[buffer]);
+    };
+
+    WebGL.createTexture = function (ctx: number): number {
+        let id = WebGL.textureArray.findIndex((element) => element == null);
+        let texture = WebGL.contextArray[ctx].createTexture();
+
+        if (id === -1) {
+            id = WebGL.textureArray.length;
+            WebGL.textureArray.push(texture);
+        } else {
+            WebGL.textureArray[id] = texture;
+        }
+
+        return id;
+    };
+
+    WebGL.bindTexture = function (ctx: number, target: number, texture: number): void {
+        const context = WebGL.contextArray[ctx];
+        context.bindTexture(target, WebGL.textureArray[texture]);
+    };
+
+    WebGL.texImage2D = function (
+        ctx: number,
+        target: number,
+        level: number,
+        internalformat: number,
+        format: number,
+        typ: number,
+        imageId: number
+    ): void {
+        const context = WebGL.contextArray[ctx] as WebGL2RenderingContext;
+        const image = WebGL.imageDataArray[imageId];
+        context.texImage2D(
+            target,
+            level,
+            internalformat,
+            image.width,
+            image.height,
+            0,
+            format,
+            typ,
+            image
+        );
     };
 
     WebGL.getAttribLocation = function (ctx: number, program: number, name: number): number {
@@ -276,8 +325,13 @@ export function generateGlueCode(importObject: ImportObject): void {
         WebGL.contextArray[ctx].drawArrays(mode, first, count);
     };
 
-    Utilities.getImageDescriptor = function (imageId: number): number {
-        return importObject.app.getImageDescriptor(imageId);
+    Utilities.getImageData = function (imageName: number): number {
+        const name = WebGL.__getString(imageName);
+        const imageData = importObject.images[name];
+
+        const id = WebGL.imageDataArray.length;
+        WebGL.imageDataArray.push(imageData);
+        return id;
     };
 }
 

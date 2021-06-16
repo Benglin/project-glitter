@@ -1,22 +1,16 @@
 import loader from "@assemblyscript/loader";
-import { generateGlueCode, patchFromLoaderApi } from "./externals/GlueCode";
-
-interface ImageDescriptor {
-    width: number;
-    height: number;
-    data: Uint8ClampedArray;
-}
+import { generateGlueCode, NamedImageData, patchFromLoaderApi } from "./externals/GlueCode";
 
 export class Application {
     private _exports: any = null;
-    private _resources: { [key: string]: ImageDescriptor } = {};
 
     public async initialize(): Promise<boolean> {
         if (this._exports) {
             throw new Error("Application.initialize is called twice");
         }
 
-        await this._preloadResources("circle.svg"); // A little shortcut
+        // A little shortcut
+        const namedImageData = await this._preloadResources("circle.svg");
 
         const canvas = document.getElementById("canvas-3d") as HTMLCanvasElement;
         canvas.width = canvas.clientWidth;
@@ -25,10 +19,10 @@ export class Application {
         const memory = new WebAssembly.Memory({ initial: 100 }); // linear memory
 
         const imports: { [key: string]: any } = {
-            app: this,
             env: {
                 memory: memory,
             },
+            images: namedImageData,
         };
 
         generateGlueCode(imports as any);
@@ -57,34 +51,10 @@ export class Application {
         requestAnimationFrame(renderFrame);
     }
 
-    public getImageDescriptor(imageId: number): number {
-        const {
-            __getString,
-            __newArray,
-            createImageDescriptor,
-            ImageDescriptor,
-            Uint8ClampedArray_ID,
-        } = this._exports;
-
-        const sourceUrl = __getString(imageId);
-        const desc = this._resources[sourceUrl];
-
-        if (!desc) {
-            throw new Error(`Resource not found: ${sourceUrl}`);
-        }
-
-        const ptr = createImageDescriptor(desc.width, desc.height);
-        const imageData = ImageDescriptor.wrap(ptr);
-        imageData.data = __newArray(Uint8ClampedArray_ID, desc.data);
-
-        return ptr;
-    }
-
-    private async _preloadResources(resourceName: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    private async _preloadResources(resourceName: string): Promise<NamedImageData> {
+        return new Promise<NamedImageData>((resolve, reject) => {
             const image = new Image();
 
-            const thisObject = this;
             image.onload = function (event: Event) {
                 const canvas = document.createElement("canvas");
                 const context = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -92,13 +62,14 @@ export class Application {
 
                 const data = context.getImageData(0, 0, image.width, image.height);
 
-                thisObject._resources[resourceName] = {
+                const resources: NamedImageData = {};
+                resources[resourceName] = {
                     width: data.width,
                     height: data.height,
                     data: data.data,
                 };
 
-                resolve();
+                resolve(resources);
             };
 
             image.onerror = function (event: Event | string) {
