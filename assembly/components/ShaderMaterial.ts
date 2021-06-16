@@ -8,26 +8,31 @@ export class ShaderMaterial {
         this._gl = gl;
     }
 
-    public compile(vertexShaderCode: string, fragmentShaderCode: string): boolean {
+    public compile(vertexShaderCode: string, fragmentShaderCode: string): void {
         if (this._program >= 0) {
             throw new Error(`Material has been compiled before`);
         }
 
-        const vertexShader = this._gl.createShader(this._gl.VERTEX_SHADER);
-        this._gl.shaderSource(vertexShader, vertexShaderCode);
-        this._gl.compileShader(vertexShader);
+        const gl = this._gl;
 
-        const fragmentShader = this._gl.createShader(this._gl.FRAGMENT_SHADER);
-        this._gl.shaderSource(fragmentShader, fragmentShaderCode);
-        this._gl.compileShader(fragmentShader);
+        const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, vertexShaderCode);
+        gl.compileShader(vertexShader);
 
-        this._program = this._gl.createProgram();
+        const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragmentShader, fragmentShaderCode);
+        gl.compileShader(fragmentShader);
 
-        this._gl.attachShader(this._program, vertexShader);
-        this._gl.attachShader(this._program, fragmentShader);
-        this._gl.linkProgram(this._program);
+        this._program = gl.createProgram();
 
-        return true; // TODO: Check compilation status.
+        gl.attachShader(this._program, vertexShader);
+        gl.attachShader(this._program, fragmentShader);
+        gl.linkProgram(this._program);
+
+        if (!gl.getProgramParameter(this._program, gl.LINK_STATUS)) {
+            const info = gl.getProgramInfoLog(this._program);
+            throw new Error(`WebGL program compilation failed: ${info}`);
+        }
     }
 
     public getAttributeLocation(attribName: string): i32 {
