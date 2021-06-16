@@ -45,7 +45,7 @@ interface ImportObject {
             ctx: number,
             indx: number,
             size: number,
-            typ: number,
+            type: number,
             normalized: number,
             stride: number,
             offset: number
@@ -230,12 +230,12 @@ export function generateGlueCode(importObject: ImportObject): void {
         level: number,
         internalformat: number,
         format: number,
-        typ: number,
+        type: number,
         imageId: number
     ): void {
         const context = WebGL.contextArray[ctx];
         const image = WebGL.imageDataArray[imageId];
-        context.texImage2D(target, level, internalformat, format, typ, image);
+        context.texImage2D(target, level, internalformat, format, type, image);
     };
 
     WebGL.activeTexture = function (ctx: number, texture: number): void {
@@ -312,21 +312,32 @@ export function generateGlueCode(importObject: ImportObject): void {
     WebGL["bufferData<f32>"] = bufferdata;
     WebGL["bufferData<f64>"] = bufferdata;
     WebGL["bufferData<i32>"] = bufferdata;
+    WebGL["bufferData<u16>"] = bufferdata;
 
     WebGL.vertexAttribPointer = function (
         ctx: number,
         indx: number,
         size: number,
-        typ: number,
+        type: number,
         normalized: number,
         stride: number,
         offset: number
     ): void {
-        WebGL.contextArray[ctx].vertexAttribPointer(indx, size, typ, !!normalized, stride, offset);
+        WebGL.contextArray[ctx].vertexAttribPointer(indx, size, type, !!normalized, stride, offset);
     };
 
     WebGL.drawArrays = function (ctx: number, mode: number, first: number, count: number): void {
         WebGL.contextArray[ctx].drawArrays(mode, first, count);
+    };
+
+    importObject.WebGL.drawElements = function (
+        ctx: number,
+        mode: number,
+        count: number,
+        type: number,
+        offset: number
+    ): void {
+        WebGL.contextArray[ctx].drawElements(mode, count, type, offset);
     };
 
     Utilities.getImageData = function (imageName: number): number {
