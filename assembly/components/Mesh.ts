@@ -20,10 +20,16 @@ export class Mesh extends Object3D {
         const material = this._material;
         const attributes = geometry.attributes;
 
+        let vertices: i32 = 3;
         for (let i = 0; i < attributes.length; i++) {
             const attribName = attributes[i];
             const attribute = geometry.getAttribute(attribName);
             if (!attribute) return;
+
+            if (attribName === "position") {
+                const array = attribute.data as Float32Array;
+                vertices = array.length / attribute.itemSize;
+            }
 
             const buffer = geometry.getBuffer(attribName);
             gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -39,6 +45,6 @@ export class Mesh extends Object3D {
         }
 
         this._material.activate();
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 3);
+        gl.drawArrays(gl.TRIANGLES, 0, vertices);
     }
 }
