@@ -45,6 +45,14 @@ export class Mesh extends Object3D {
         }
 
         this._material.activate();
-        gl.drawArrays(gl.TRIANGLES, 0, vertices);
+
+        const indexBuffer = geometry.getIndexBuffer();
+
+        if (indexBuffer == -1) {
+            gl.drawArrays(gl.TRIANGLES, 0, vertices);
+        } else {
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+            gl.drawElements(gl.TRIANGLES, vertices, gl.UNSIGNED_SHORT, 0);
+        }
     }
 }
