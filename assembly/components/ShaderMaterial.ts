@@ -1,11 +1,11 @@
 import { WebGLProgram, WebGLRenderingContext } from "../externals/WebGL";
+import { Object3D } from "./Object3D";
 
-export class ShaderMaterial {
+export class ShaderMaterial extends Object3D {
     private _program: WebGLProgram = -1;
-    private readonly _gl: WebGLRenderingContext;
 
     constructor(gl: WebGLRenderingContext) {
-        this._gl = gl;
+        super(gl);
     }
 
     public compile(vertexShaderCode: string, fragmentShaderCode: string): void {
@@ -13,7 +13,7 @@ export class ShaderMaterial {
             throw new Error(`Material has been compiled before`);
         }
 
-        const gl = this._gl;
+        const gl = this.gl;
 
         const vertexShader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vertexShader, vertexShaderCode);
@@ -37,10 +37,10 @@ export class ShaderMaterial {
 
     public getAttributeLocation(attribName: string): i32 {
         if (this._program < 0) return -1;
-        return this._gl.getAttribLocation(this._program, attribName);
+        return this.gl.getAttribLocation(this._program, attribName);
     }
 
     activate(): void {
-        this._gl.useProgram(this._program);
+        this.gl.useProgram(this._program);
     }
 }

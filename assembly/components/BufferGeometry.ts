@@ -1,4 +1,5 @@
 import { WebGLBuffer, WebGLRenderingContext } from "../externals/WebGL";
+import { Object3D } from "./Object3D";
 import { float32ArrayToStatic32Array } from "./Utilities";
 
 export class BufferAttribute {
@@ -45,13 +46,12 @@ export class Float32BufferAttribute extends BufferAttribute {
     }
 }
 
-export class BufferGeometry {
-    private readonly _gl: WebGLRenderingContext;
+export class BufferGeometry extends Object3D {
     private readonly _buffers: Map<string, WebGLBuffer> = new Map();
     private readonly _attributes: Map<string, BufferAttribute> = new Map();
 
     constructor(gl: WebGLRenderingContext) {
-        this._gl = gl;
+        super(gl);
     }
 
     public get attributes(): string[] {
@@ -72,7 +72,7 @@ export class BufferGeometry {
         }
 
         if (!this._buffers.has(name)) {
-            const gl = this._gl;
+            const gl = this.gl;
             const data = this._attributes.get(name).data as Float32Array;
 
             // TODO: Update 'bufferData' to use Float32Array?

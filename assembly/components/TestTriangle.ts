@@ -1,5 +1,6 @@
 import { WebGLRenderingContext } from "../externals/WebGL";
 import { BufferAttribute, BufferGeometry } from "./BufferGeometry";
+import { Object3D } from "./Object3D";
 import { ShaderMaterial } from "./ShaderMaterial";
 import { float32ArrayFromArray, float32ArrayToStatic32Array } from "./Utilities";
 
@@ -24,13 +25,12 @@ const fragmentShaderCode: string = `
     }
 `;
 
-export class TestTriangle {
-    private readonly _gl: WebGLRenderingContext;
+export class TestTriangle extends Object3D {
     private readonly _geometry: BufferGeometry;
     private readonly _shaderMaterial: ShaderMaterial;
 
     constructor(gl: WebGLRenderingContext) {
-        this._gl = gl;
+        super(gl);
 
         this._shaderMaterial = new ShaderMaterial(gl);
         this._shaderMaterial.compile(vertexShaderCode, fragmentShaderCode);
@@ -41,7 +41,7 @@ export class TestTriangle {
         const clrs = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
         const colors = float32ArrayFromArray(clrs);
 
-        this._geometry = new BufferGeometry(this._gl);
+        this._geometry = new BufferGeometry(this.gl);
         this._geometry.setAttribute("position", new BufferAttribute(positions, 2, false));
         this._geometry.setAttribute("color", new BufferAttribute(colors, 3, false));
     }
@@ -53,7 +53,7 @@ export class TestTriangle {
     }
 
     private _todo_TurnThisIntoMeshRender(): void {
-        const gl = this._gl;
+        const gl = this.gl;
         const geometry = this._geometry;
         const material = this._shaderMaterial;
         const attributes = geometry.attributes;
