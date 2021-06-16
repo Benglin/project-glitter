@@ -27,8 +27,8 @@ export class Mesh extends Object3D {
             if (!attribute) return;
 
             if (attribName === "position") {
-                const array = attribute.data as Float32Array;
-                vertices = array.length / attribute.itemSize;
+                const elementCount = attribute.data.length;
+                vertices = elementCount / attribute.itemSize;
             }
 
             const buffer = geometry.getBuffer(attribName);

@@ -3,7 +3,6 @@ import { BufferAttribute, BufferGeometry } from "./BufferGeometry";
 import { Mesh } from "./Mesh";
 import { ShaderMaterial } from "./ShaderMaterial";
 import { Texture } from "./Texture";
-import { float32ArrayFromArray } from "./Utilities";
 
 const vertexShaderCode: string = `
     precision highp float;
@@ -54,20 +53,24 @@ export class TestTriangle {
         this._texture = new Texture(gl);
         this._texture.load("test.png");
 
-        const d = 0.5;
-        const pos = [-d, d, -d, -d, d, d, d, d, -d, -d, d, -d];
-        const positions = float32ArrayFromArray(pos);
+        const d: f32 = 0.5;
+        const positions: StaticArray<f32> = [-d, d, -d, -d, d, d, d, d, -d, -d, d, -d];
 
-        const texCoord = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0];
-        const texCoords = float32ArrayFromArray(texCoord);
+        const texCoords: StaticArray<f32> = [
+            0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+        ];
 
-        const clrs = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
-        const colors = float32ArrayFromArray(clrs);
+        const colors: StaticArray<f32> = [
+            1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+        ];
 
         this._geometry = new BufferGeometry(gl);
         this._geometry.setAttribute("position", new BufferAttribute(positions, 2, false));
         this._geometry.setAttribute("texCoord", new BufferAttribute(texCoords, 2, false));
         this._geometry.setAttribute("color", new BufferAttribute(colors, 3, false));
+
+        const indices: StaticArray<u16> = [0, 1, 2, 3, 4, 5];
+        this._geometry.setIndexBuffer(indices);
 
         this._triangleMesh = new Mesh(gl, this._geometry, this._shaderMaterial);
     }

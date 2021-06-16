@@ -5,30 +5,30 @@ import { float32ArrayToStatic32Array } from "./Utilities";
 export class BufferAttribute {
     protected readonly _itemSize: i32;
     protected readonly _normalized: boolean;
-    protected _typedArray: ArrayBufferView;
+    protected readonly _staticArray: StaticArray<f32>;
 
     /**
      * This class stores data for an attribute (such as vertex positions, face indices,
      * normals, colors, UVs, and any custom attributes ) associated with a BufferGeometry,
      * which allows for more efficient passing of data to the GPU.
      *
-     * @param {ArrayBufferView} array Must be a TypedArray. Used to instantiate the buffer.
-     * This array should have `itemSize * numVertices` elements, where numVertices is the
-     * number of vertices in the associated BufferGeometry.
+     * @param {StaticArray<f32>} array Used to instantiate the buffer. This array should
+     * have `itemSize * numVertices` elements, where numVertices is the number of vertices
+     * in the associated BufferGeometry.
      * @param {i32} itemSize The number of values of the array that should be associated
      * with a particular vertex. For instance, if this attribute is storing a 3-component
      * vector (such as a position, normal, or color), then itemSize should be 3.
      * @param {boolean} normalized Indicates how the underlying data in the buffer maps
      * to the values in the GLSL shader code.
      */
-    constructor(array: ArrayBufferView, itemSize: i32, normalized: boolean) {
-        this._typedArray = array;
+    constructor(array: StaticArray<f32>, itemSize: i32, normalized: boolean) {
+        this._staticArray = array;
         this._itemSize = itemSize;
         this._normalized = normalized;
     }
 
-    get data(): ArrayBufferView {
-        return this._typedArray;
+    get data(): StaticArray<f32> {
+        return this._staticArray;
     }
 
     get itemSize(): i32 {
@@ -68,10 +68,9 @@ export class BufferGeometry extends Object3D {
 
         if (!this._buffers.has(name)) {
             const gl = this.gl;
-            const data = this._attributes.get(name).data as Float32Array;
 
             // TODO: Update 'bufferData' to use Float32Array?
-            const staticArray = float32ArrayToStatic32Array(data);
+            const staticArray = this._attributes.get(name).data;
 
             const newBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, newBuffer);
