@@ -1,22 +1,26 @@
 import { WebGLRenderingContext } from "../externals/WebGL";
 import { BufferAttribute, BufferGeometry } from "./BufferGeometry";
 import { ShaderMaterial } from "./ShaderMaterial";
-import { float32ArrayFromArray } from "./Utilities";
+import { float32ArrayFromArray, float32ArrayToStatic32Array } from "./Utilities";
 
 const vertexShaderCode: string = `
     precision highp float;
     attribute vec2 position;
+    attribute vec3 color;
+    varying vec3 vColor;
 
     void  main() {
+        vColor = color;
         gl_Position = vec4( position, 0.0, 1.0 );
     }
 `;
 
 const fragmentShaderCode: string = `
     precision highp float;
+    varying vec3 vColor;
 
     void main() {
-        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+        gl_FragColor = vec4(vColor, 1.0);
     }
 `;
 
@@ -31,11 +35,15 @@ export class TestTriangle {
         this._shaderMaterial = new ShaderMaterial(gl);
         this._shaderMaterial.compile(vertexShaderCode, fragmentShaderCode);
 
-        const source = [0.0, 0.5, -0.5, -0.5, 0.5, -0.5];
-        const positions = float32ArrayFromArray(source);
+        const pos = [0.0, 0.5, -0.5, -0.5, 0.5, -0.5];
+        const positions = float32ArrayFromArray(pos);
+
+        const clrs = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
+        const colors = float32ArrayFromArray(clrs);
 
         this._geometry = new BufferGeometry(this._gl);
         this._geometry.setAttribute("position", new BufferAttribute(positions, 2, false));
+        this._geometry.setAttribute("color", new BufferAttribute(colors, 3, false));
     }
 
     public update(deltaMs: f32): void {}
