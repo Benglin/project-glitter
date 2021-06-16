@@ -18,6 +18,8 @@ interface ImportObject {
         createProgram: (ctx: number) => number;
         attachShader: (ctx: number, program: number, shader: number) => void;
         linkProgram: (ctx: number, program: number) => void;
+        getProgramParameter: (ctx: number, program: number, paramName: number) => number;
+        getProgramInfoLog: (ctx: number, program: number) => number;
         useProgram: (ctx: number, program: number) => void;
         createBuffer: (ctx: number) => number;
         bindBuffer: (ctx: number, target: number, buffer: number) => void;
@@ -149,6 +151,20 @@ export function generateGlueCode(importObject: ImportObject): void {
         if (!context.getProgramParameter(prog, context.LINK_STATUS)) {
             console.log(context.getProgramInfoLog(prog));
         }
+    };
+
+    WebGL.getProgramParameter = function (ctx: number, program: number, paramName: number): number {
+        const context = WebGL.contextArray[ctx];
+        const prog = WebGL.programArray[program];
+        return context.getProgramParameter(prog, paramName);
+    };
+
+    WebGL.getProgramInfoLog = function (ctx: number, program: number): number {
+        const context = WebGL.contextArray[ctx];
+        const prog = WebGL.programArray[program];
+
+        const message = context.getProgramInfoLog(prog);
+        return this.__newString(message);
     };
 
     WebGL.useProgram = function (ctx: number, program: number): void {
