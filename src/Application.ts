@@ -1,13 +1,24 @@
 import loader from "@assemblyscript/loader";
+import { MediaController } from "./components/MediaController";
 import { generateGlueCode, NamedImageData, patchFromLoaderApi } from "./externals/GlueCode";
 
 export class Application {
     private _exports: any = null;
+    private _mediaController: MediaController | null = null;
 
     public async initialize(): Promise<boolean> {
         if (this._exports) {
             throw new Error("Application.initialize is called twice");
         }
+
+        this._mediaController = new MediaController("audio-source");
+
+        document.addEventListener("click", () => {
+            if (this._mediaController) {
+                this._mediaController.connect();
+                this._mediaController.play();
+            }
+        });
 
         // A little shortcut
         const namedImageData = await this._preloadResources("test.png");
@@ -41,14 +52,24 @@ export class Application {
     }
 
     public startRenderLoop(): void {
+        const { updateFrame, renderFrame, getFrequencyBuffer, __getArrayView } = this._exports;
+
         const thisObject = this;
-        function renderFrame(): void {
-            thisObject._exports.updateFrame();
-            thisObject._exports.renderFrame();
-            requestAnimationFrame(renderFrame);
+        function renderFrameCore(): void {
+            const bufferId = getFrequencyBuffer();
+            const buffer = __getArrayView(bufferId) as Uint8Array;
+
+            if (thisObject._mediaController) {
+                if (thisObject._mediaController.getByteFrequencyData(buffer)) {
+                    updateFrame();
+                }
+            }
+
+            renderFrame();
+            requestAnimationFrame(renderFrameCore);
         }
 
-        requestAnimationFrame(renderFrame);
+        requestAnimationFrame(renderFrameCore);
     }
 
     private async _preloadResources(resourceName: string): Promise<NamedImageData> {
