@@ -51,6 +51,7 @@ export class Mesh extends Object3D {
         if (indexBuffer == -1) {
             gl.drawArrays(gl.TRIANGLES, 0, vertices);
         } else {
+            vertices = geometry.getIndexBufferLength();
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             gl.drawElements(gl.TRIANGLES, vertices, gl.UNSIGNED_SHORT, 0);
         }

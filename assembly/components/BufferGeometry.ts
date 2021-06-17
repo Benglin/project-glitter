@@ -41,6 +41,7 @@ export class BufferAttribute {
 
 export class BufferGeometry extends Object3D {
     private _indexBuffer: WebGLBuffer = -1;
+    private _indexBufferLength: i32 = -1;
     private readonly _buffers: Map<string, WebGLBuffer> = new Map();
     private readonly _attributes: Map<string, BufferAttribute> = new Map();
 
@@ -84,11 +85,16 @@ export class BufferGeometry extends Object3D {
     public setIndexBuffer(array: StaticArray<u16>): void {
         const gl = this.gl;
         this._indexBuffer = gl.createBuffer();
+        this._indexBufferLength = array.length;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, array, gl.STATIC_DRAW);
     }
 
     public getIndexBuffer(): WebGLBuffer {
         return this._indexBuffer;
+    }
+
+    public getIndexBufferLength(): i32 {
+        return this._indexBufferLength;
     }
 }
