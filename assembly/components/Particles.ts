@@ -8,7 +8,9 @@ const vertexShaderCode: string = `
     precision highp float;
 
     uniform vec2 screenSize;
+    uniform float frequencies[128];
 
+    attribute float serialNumber;
     attribute float angle;
     attribute vec2 offset;
     attribute vec2 texCoord;
@@ -19,8 +21,10 @@ const vertexShaderCode: string = `
         float particleSize = 32.0; // Particle size in pixels.
 
         float minSize = (screenSize.x < screenSize.y ? screenSize.x : screenSize.y) * 0.95;
-        float xRadius = minSize / screenSize.x;
-        float yRadius = minSize / screenSize.y;
+        float currSize = minSize * frequencies[int(serialNumber)];
+
+        float xRadius = currSize / screenSize.x;
+        float yRadius = currSize / screenSize.y;
 
         vec2 position = vec2(xRadius * cos(angle), yRadius * sin(angle));
         float xOffset = (particleSize * 0.5) / screenSize.x;
@@ -47,6 +51,7 @@ const fragmentShaderCode: string = `
 
 class ParticleAttributes {
     private readonly _particleCount: i32;
+    private readonly _serialNumber: StaticArray<f32>; // attribute float serialNumber
     private readonly _angle: StaticArray<f32>; // attribute float angle
     private readonly _offset: StaticArray<f32>; // attribute vec2 offset
     private readonly _texCoord: StaticArray<f32>; // attribute vec2
@@ -56,6 +61,7 @@ class ParticleAttributes {
         this._particleCount = particleCount;
 
         const vertexCount = particleCount * 4; // 4 vertex per particle.
+        this._serialNumber = new StaticArray<f32>(vertexCount);
         this._angle = new StaticArray<f32>(vertexCount);
         this._offset = new StaticArray<f32>(vertexCount * 2);
         this._texCoord = new StaticArray<f32>(vertexCount * 2);
@@ -64,6 +70,10 @@ class ParticleAttributes {
         for (let p = 0; p < particleCount; ++p) {
             this._generateParticle(p);
         }
+    }
+
+    public get serialNumber(): StaticArray<f32> {
+        return this._serialNumber;
     }
 
     public get angle(): StaticArray<f32> {
@@ -90,6 +100,7 @@ class ParticleAttributes {
         const angle = <f32>(f / this._particleCount);
         for (let i = 0; i < 4; ++i) {
             this._angle[baseIndex + i] = angle;
+            this._serialNumber[baseIndex + i] = <f32>particleIndex;
         }
 
         // 6 indices per particle (2 triangles per quad).
@@ -135,6 +146,10 @@ export class Particles {
     private readonly _triangleMesh: Mesh;
     private readonly _attributes: ParticleAttributes;
 
+    // Input frequency data.
+    private readonly _frequencyUint8: Uint8Array = new Uint8Array(128);
+    private readonly _frequencyFloat32: StaticArray<f32> = new StaticArray<f32>(128);
+
     constructor(gl: WebGLRenderingContext) {
         this._shaderMaterial = new ShaderMaterial(gl);
         this._shaderMaterial.compile(vertexShaderCode, fragmentShaderCode);
@@ -151,25 +166,41 @@ export class Particles {
 
         this._attributes = new ParticleAttributes(128);
 
-        const angle: StaticArray<f32> = this._attributes.angle;
+        const serialNumber = this._attributes.serialNumber;
+        const angle = this._attributes.angle;
         const offset = this._attributes.offset;
         const texCoord = this._attributes.texCoord;
 
         this._geometry = new BufferGeometry(gl);
+        this._geometry.setAttribute("serialNumber", new BufferAttribute(serialNumber, 1, false));
         this._geometry.setAttribute("angle", new BufferAttribute(angle, 1, false));
         this._geometry.setAttribute("offset", new BufferAttribute(offset, 2, false));
         this._geometry.setAttribute("texCoord", new BufferAttribute(texCoord, 2, false));
 
         this._geometry.setIndexBuffer(this._attributes.indices);
 
+        // Generate some random frequencies as a start.
+        for (let i = 0; i < this._frequencyFloat32.length; ++i) {
+            this._frequencyFloat32[i] = <f32>(Math.random() * 0.5 + 0.5);
+        }
+
         this._triangleMesh = new Mesh(gl, this._geometry, this._shaderMaterial);
     }
 
-    public update(deltaMs: f32): void {}
+    public getFrequencyBuffer(): Uint8Array {
+        return this._frequencyUint8;
+    }
+
+    public update(deltaMs: f32): void {
+        // for (let i = 0; i < this._frequencyUint8.length; ++i) {
+        //     this._frequencyFloat32[i] = <f32>(<i32>this._frequencyUint8[i]);
+        // }
+    }
 
     public render(): void {
         if (this._triangleMesh) {
             this._shaderMaterial.bindTexture(0, "uSampler", this._texture);
+            this._shaderMaterial.setUniform1fv("frequencies", this._frequencyFloat32);
             this._triangleMesh.render();
         }
     }
