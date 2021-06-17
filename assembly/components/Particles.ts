@@ -15,15 +15,27 @@ const vertexShaderCode: string = `
     attribute vec2 offset;
     attribute vec2 texCoord;
 
+    varying vec3 vColor;
     varying highp vec2 vTexCoord;
 
-    void main() {
-        float particleSize = 32.0; // Particle size in pixels.
+    vec3 hsv2rgb(vec3 c)
+    {
+        vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+        vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+        return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    }
+
+    void main()
+    {
+        vec3 hsv = vec3((serialNumber / 128.0) * 2.0 * 3.14159265, 1.0, 1.0);
+        vColor = hsv2rgb(hsv);
 
         float index = abs((serialNumber * 2.0) - 127.0);
+        float frequency = frequencies[int(index)];
+        float particleSize = 16.0 + (24.0 * frequency); // Particle size in pixels.
 
         float minSize = (screenSize.x < screenSize.y ? screenSize.x : screenSize.y) * 0.95;
-        float currSize = minSize * (0.5 + (frequencies[int(index)] * 0.5));
+        float currSize = minSize * (0.5 + (frequency * 0.5));
 
         float xRadius = currSize / screenSize.x;
         float yRadius = currSize / screenSize.y;
@@ -43,11 +55,12 @@ const fragmentShaderCode: string = `
 
     uniform sampler2D uSampler;
 
+    varying vec3 vColor;
     varying highp vec2 vTexCoord;
 
     void main() {
         vec4 color = texture2D(uSampler, vTexCoord);
-        gl_FragColor = color;
+        gl_FragColor = color * vec4(vColor, 1.0);
     }
 `;
 
