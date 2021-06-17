@@ -127,6 +127,14 @@ export function generateGlueCode(importObject: ImportObject): void {
         return WebGL.contextArray[ctx].drawingBufferHeight;
     };
 
+    WebGL.enable = function (ctx: number, cap: number): void {
+        WebGL.contextArray[ctx].enable(cap);
+    };
+
+    WebGL.blendFunc = function (ctx: number, sfactor: number, dfactor: number): void {
+        WebGL.contextArray[ctx].blendFunc(sfactor, dfactor);
+    };
+
     WebGL.createShader = function (ctx: number, type: number): number {
         let id = WebGL.shaderArray.findIndex((element) => element == null);
         let shader = WebGL.contextArray[ctx].createShader(type);
@@ -257,7 +265,12 @@ export function generateGlueCode(importObject: ImportObject): void {
         WebGL.contextArray[ctx].activeTexture(texture);
     };
 
-    WebGL.texParameteri = (ctx: number, target: number, pname: number, param: number) => {
+    WebGL.texParameteri = function (
+        ctx: number,
+        target: number,
+        pname: number,
+        param: number
+    ): void {
         const context = WebGL.contextArray[ctx];
         context.texParameteri(target, pname, param);
     };
