@@ -7,6 +7,10 @@ export function initialize(canvasId: string, contextType: string): boolean {
     return true;
 }
 
+export function getFrequencyBuffer(): Uint8Array {
+    return renderer.getFrequencyBuffer();
+}
+
 export function updateFrame(): void {
     renderer.updateFrame();
 }
