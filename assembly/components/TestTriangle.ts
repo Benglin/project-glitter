@@ -54,11 +54,8 @@ export class TestTriangle {
         this._texture.load("test.png");
 
         const d: f32 = 0.5;
-        const positions: StaticArray<f32> = [-d, d, -d, -d, d, d, d, d, -d, -d, d, -d];
-
-        const texCoords: StaticArray<f32> = [
-            0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
-        ];
+        const positions: StaticArray<f32> = [-d, d, -d, -d, d, d, d, -d];
+        const texCoords: StaticArray<f32> = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0];
 
         const colors: StaticArray<f32> = [
             1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
@@ -69,7 +66,7 @@ export class TestTriangle {
         this._geometry.setAttribute("texCoord", new BufferAttribute(texCoords, 2, false));
         this._geometry.setAttribute("color", new BufferAttribute(colors, 3, false));
 
-        const indices: StaticArray<u16> = [0, 1, 2, 3, 4, 5];
+        const indices: StaticArray<u16> = [0, 1, 2, 2, 1, 3];
         this._geometry.setIndexBuffer(indices);
 
         this._triangleMesh = new Mesh(gl, this._geometry, this._shaderMaterial);
