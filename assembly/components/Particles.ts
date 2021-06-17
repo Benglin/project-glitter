@@ -164,7 +164,7 @@ export class Particles {
         this._shaderMaterial.setUniform2f("screenSize", screenWidth, screenHeight);
 
         this._texture = new Texture(gl);
-        this._texture.load("test.png");
+        this._texture.load("circle.png");
 
         this._attributes = new ParticleAttributes(128);
 

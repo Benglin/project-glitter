@@ -21,7 +21,7 @@ export class Application {
         });
 
         // A little shortcut
-        const namedImageData = await this._preloadResources("test.png");
+        const namedImageData = await this._preloadResources("circle.png");
 
         const canvas = document.getElementById("canvas-3d") as HTMLCanvasElement;
         canvas.width = canvas.clientWidth;
