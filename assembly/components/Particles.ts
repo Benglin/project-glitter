@@ -20,8 +20,10 @@ const vertexShaderCode: string = `
     void main() {
         float particleSize = 32.0; // Particle size in pixels.
 
+        float index = abs((serialNumber * 2.0) - 127.0);
+
         float minSize = (screenSize.x < screenSize.y ? screenSize.x : screenSize.y) * 0.95;
-        float currSize = minSize * frequencies[int(serialNumber)];
+        float currSize = minSize * (0.5 + (frequencies[int(index)] * 0.5));
 
         float xRadius = currSize / screenSize.x;
         float yRadius = currSize / screenSize.y;
@@ -179,11 +181,6 @@ export class Particles {
 
         this._geometry.setIndexBuffer(this._attributes.indices);
 
-        // Generate some random frequencies as a start.
-        for (let i = 0; i < this._frequencyFloat32.length; ++i) {
-            this._frequencyFloat32[i] = <f32>(Math.random() * 0.5 + 0.5);
-        }
-
         this._triangleMesh = new Mesh(gl, this._geometry, this._shaderMaterial);
     }
 
@@ -192,9 +189,10 @@ export class Particles {
     }
 
     public update(deltaMs: f32): void {
-        // for (let i = 0; i < this._frequencyUint8.length; ++i) {
-        //     this._frequencyFloat32[i] = <f32>(<i32>this._frequencyUint8[i]);
-        // }
+        for (let i = 0; i < this._frequencyUint8.length; ++i) {
+            const f = <f32>this._frequencyUint8[i];
+            this._frequencyFloat32[i] = <f32>(f / 255.0);
+        }
     }
 
     public render(): void {
