@@ -44,31 +44,23 @@ export class ShaderMaterial extends Object3D {
     }
 
     public setUniform1f(uniformName: string, value: f32): void {
-        if (this._program < 0) {
-            throw new Error(`Invalid program to set uniform: ${uniformName}`);
-        }
-
-        if (!this._uniformLocations.has(uniformName)) {
-            const loc = this.gl.getUniformLocation(this._program, uniformName);
-            this._uniformLocations.set(uniformName, loc);
-        }
-
-        const location = this._uniformLocations.get(uniformName);
+        const location = this._getUniformLocation(uniformName);
         this.gl.uniform1f(location, value);
     }
 
+    public setUniform1fv(uniformName: string, value: StaticArray<f32>): void {
+        const location = this._getUniformLocation(uniformName);
+        this.gl.uniform1fv(location, value);
+    }
+
     public setUniform1i(uniformName: string, value: i32): void {
-        if (this._program < 0) {
-            throw new Error(`Invalid program to set uniform: ${uniformName}`);
-        }
-
-        if (!this._uniformLocations.has(uniformName)) {
-            const loc = this.gl.getUniformLocation(this._program, uniformName);
-            this._uniformLocations.set(uniformName, loc);
-        }
-
-        const location = this._uniformLocations.get(uniformName);
+        const location = this._getUniformLocation(uniformName);
         this.gl.uniform1i(location, value);
+    }
+
+    public setUniform2f(uniformName: string, x: f32, y: f32): void {
+        const location = this._getUniformLocation(uniformName);
+        this.gl.uniform2f(location, x, y);
     }
 
     public bindTexture(texUnitIndex: u32, uniformName: string, texture: Texture): void {
@@ -79,5 +71,18 @@ export class ShaderMaterial extends Object3D {
 
     public activate(): void {
         this.gl.useProgram(this._program);
+    }
+
+    private _getUniformLocation(uniformName: string): i32 {
+        if (this._program < 0) {
+            throw new Error(`Invalid program to set uniform: ${uniformName}`);
+        }
+
+        if (!this._uniformLocations.has(uniformName)) {
+            const loc = this.gl.getUniformLocation(this._program, uniformName);
+            this._uniformLocations.set(uniformName, loc);
+        }
+
+        return this._uniformLocations.get(uniformName);
     }
 }

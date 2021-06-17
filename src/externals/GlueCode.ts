@@ -99,7 +99,14 @@ export function generateGlueCode(importObject: ImportObject): void {
 
         const canvas = element as HTMLCanvasElement;
 
-        const gl = canvas.getContext(WebGL.__getString(contextType));
+        const context = canvas.getContext(WebGL.__getString(contextType));
+        const gl = context as WebGLRenderingContext;
+        const maxVertexUniform = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
+        const maxFragmentUniform = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
+
+        console.log(`MAX_VERTEX_UNIFORM_VECTORS: ${maxVertexUniform}`);
+        console.log(`MAX_FRAGMENT_UNIFORM_VECTORS: ${maxFragmentUniform}`);
+
         let id = WebGL.contextArray.findIndex((element) => element == null);
 
         if (id === -1) {
@@ -110,6 +117,14 @@ export function generateGlueCode(importObject: ImportObject): void {
         }
 
         return id;
+    };
+
+    WebGL.getDrawingBufferWidth = function (ctx: number): number {
+        return WebGL.contextArray[ctx].drawingBufferWidth;
+    };
+
+    WebGL.getDrawingBufferHeight = function (ctx: number): number {
+        return WebGL.contextArray[ctx].drawingBufferHeight;
     };
 
     WebGL.createShader = function (ctx: number, type: number): number {
@@ -248,10 +263,10 @@ export function generateGlueCode(importObject: ImportObject): void {
     };
 
     WebGL.getAttribLocation = function (ctx: number, program: number, name: number): number {
-        return WebGL.contextArray[ctx].getAttribLocation(
-            WebGL.programArray[program],
-            WebGL.__getString(name)
-        );
+        const attribName = WebGL.__getString(name);
+        const prog = WebGL.programArray[program];
+        const loc = WebGL.contextArray[ctx].getAttribLocation(prog, attribName);
+        return loc;
     };
 
     WebGL.enableVertexAttribArray = function (ctx: number, index: number): void {
@@ -278,6 +293,17 @@ export function generateGlueCode(importObject: ImportObject): void {
     WebGL.uniform1f = function (ctx: number, loc: number, value: number): void {
         const location = WebGL.uniformLocationArray[loc];
         WebGL.contextArray[ctx].uniform1f(location, value);
+    };
+
+    WebGL.uniform1fv = function (ctx: number, loc: number, view: number): void {
+        const location = WebGL.uniformLocationArray[loc];
+        const arrayView = WebGL.__getArrayView(view);
+        WebGL.contextArray[ctx].uniform1fv(location, arrayView);
+    };
+
+    WebGL.uniform2f = function (ctx: number, loc: number, x: number, y: number): void {
+        const location = WebGL.uniformLocationArray[loc];
+        WebGL.contextArray[ctx].uniform2f(location, x, y);
     };
 
     WebGL.uniform1i = function (ctx: number, loc: number, value: number): void {
