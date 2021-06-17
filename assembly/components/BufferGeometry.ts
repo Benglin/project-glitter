@@ -6,6 +6,8 @@ export class BufferAttribute {
     protected readonly _normalized: boolean;
     protected readonly _staticArray: StaticArray<f32>;
 
+    private _location: i32 = -1;
+
     /**
      * This class stores data for an attribute (such as vertex positions, face indices,
      * normals, colors, UVs, and any custom attributes ) associated with a BufferGeometry,
@@ -36,6 +38,14 @@ export class BufferAttribute {
 
     get normalized(): boolean {
         return this._normalized;
+    }
+
+    get location(): i32 {
+        return this._location;
+    }
+
+    set location(loc: i32) {
+        this._location = loc;
     }
 }
 
