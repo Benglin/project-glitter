@@ -22,6 +22,9 @@ export class Renderer {
         this._gl.clearColor(0.392, 0.584, 0.929, 1.0);
         this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
 
+        this._gl.enable(this._gl.BLEND);
+        this._gl.blendFunc(this._gl.SRC_ALPHA, this._gl.ONE_MINUS_SRC_ALPHA);
+
         this._particles.render();
     }
 }
