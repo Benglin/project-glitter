@@ -17,9 +17,12 @@ const vertexShaderCode: string = `
 
     void main() {
         float particleSize = 32.0; // Particle size in pixels.
-        float radius = 0.5; // In NDC dimension
 
-        vec2 position = vec2(radius * cos(angle), radius * sin(angle));
+        float minSize = (screenSize.x < screenSize.y ? screenSize.x : screenSize.y) * 0.95;
+        float xRadius = minSize / screenSize.x;
+        float yRadius = minSize / screenSize.y;
+
+        vec2 position = vec2(xRadius * cos(angle), yRadius * sin(angle));
         float xOffset = (particleSize * 0.5) / screenSize.x;
         float yOffset = (particleSize * 0.5) / screenSize.y;
         vec2 delta = vec2(offset.x * xOffset, offset.y * yOffset);
@@ -146,7 +149,7 @@ export class Particles {
         this._texture = new Texture(gl);
         this._texture.load("test.png");
 
-        this._attributes = new ParticleAttributes(10);
+        this._attributes = new ParticleAttributes(128);
 
         const angle: StaticArray<f32> = this._attributes.angle;
         const offset = this._attributes.offset;
