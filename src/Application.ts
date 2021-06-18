@@ -2,6 +2,10 @@ import loader from "@assemblyscript/loader";
 import { MediaController } from "./components/MediaController";
 import { generateGlueCode, NamedImageData, patchFromLoaderApi } from "./externals/GlueCode";
 
+interface OnFrameRateUpdatedFunc {
+    (fps: number): void;
+}
+
 export class Application extends EventTarget {
     public static MediaReady = "media-ready";
 
@@ -57,8 +61,11 @@ export class Application extends EventTarget {
         return true;
     }
 
-    public startRenderLoop(): void {
+    public startRenderLoop(onFrameRateUpdated: OnFrameRateUpdatedFunc): void {
         const { updateFrame, renderFrame, getFrequencyBuffer, __getArrayView } = this._exports;
+
+        let framesRendered = 0.0;
+        let startMillisecond = Date.now();
 
         const thisObject = this;
         function renderFrameCore(): void {
@@ -69,6 +76,16 @@ export class Application extends EventTarget {
                 if (thisObject._mediaController.getByteFrequencyData(buffer)) {
                     updateFrame();
                 }
+            }
+
+            framesRendered++;
+            const currMillisecond = Date.now();
+            const elapsed = currMillisecond - startMillisecond;
+            if (elapsed >= 1000) {
+                startMillisecond = currMillisecond;
+
+                onFrameRateUpdated((1000.0 * framesRendered) / elapsed);
+                framesRendered = 0;
             }
 
             renderFrame();
