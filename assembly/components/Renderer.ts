@@ -20,6 +20,7 @@ export class Renderer {
 
     public renderFrame(): void {
         this._gl.clearColor(0.392, 0.584, 0.929, 1.0);
+        this._gl.clearColor(0.0, 0.0, 0.0, 1.0);
         this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
 
         this._gl.enable(this._gl.BLEND);
