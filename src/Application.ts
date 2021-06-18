@@ -2,7 +2,9 @@ import loader from "@assemblyscript/loader";
 import { MediaController } from "./components/MediaController";
 import { generateGlueCode, NamedImageData, patchFromLoaderApi } from "./externals/GlueCode";
 
-export class Application {
+export class Application extends EventTarget {
+    public static MediaReady = "media-ready";
+
     private _exports: any = null;
     private _mediaController: MediaController | null = null;
 
@@ -12,12 +14,16 @@ export class Application {
         }
 
         this._mediaController = new MediaController("audio-source");
+        this._mediaController.loadMedia(this._resolveFilePath("Bajan-Canadian.mp3"));
+        this._mediaController.addEventListener(MediaController.MediaReady, () => {
+            document.addEventListener("click", () => {
+                if (this._mediaController) {
+                    this._mediaController.connect();
+                    this._mediaController.play();
+                }
+            });
 
-        document.addEventListener("click", () => {
-            if (this._mediaController) {
-                this._mediaController.connect();
-                this._mediaController.play();
-            }
+            this.dispatchEvent(new Event(Application.MediaReady));
         });
 
         // A little shortcut
@@ -38,7 +44,7 @@ export class Application {
 
         generateGlueCode(imports as any);
 
-        const response = await fetch(this._resolvePathFromRoot("renderer.wasm"));
+        const response = await fetch(this._resolveFilePath("renderer.wasm"));
         const wasmInstance = await loader.instantiateStreaming(response, imports);
         this._exports = wasmInstance.exports;
 
@@ -92,11 +98,11 @@ export class Application {
                 reject(event ? event.toString() : "");
             };
 
-            image.src = this._resolvePathFromRoot(resourceName);
+            image.src = this._resolveFilePath(resourceName);
         });
     }
 
-    private _resolvePathFromRoot(path: string): string {
+    private _resolveFilePath(path: string): string {
         return `${window.location.pathname}/${path}`;
     }
 }
