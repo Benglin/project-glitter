@@ -1,7 +1,6 @@
 export class MediaController extends EventTarget {
     public static MediaReady = "media-ready";
 
-    private _playing: boolean = false;
     private readonly _audioElementId: string;
 
     private _analyserNode: AnalyserNode | null = null;
@@ -49,9 +48,10 @@ export class MediaController extends EventTarget {
         const e = document.getElementById(this._audioElementId);
         const audioElement = e as HTMLAudioElement;
 
-        if (!this._playing) {
+        if (audioElement.paused) {
             audioElement.play();
-            this._playing = true;
+        } else {
+            audioElement.pause();
         }
     }
 
