@@ -1,46 +1,47 @@
-# Getting Started with Create React App
+![Project Glitter splash screen](./docs/splash-screen.png)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Getting Started with Project Glitter
 
-## Available Scripts
+There's this thing called _learning week_ in Autodesk where we take the week off our regular job, and learn whatever stuff we want to learn (except that I am not supposed to learn _cocktail making_ because that's kinda not relevant to my day job).
 
-In the project directory, you can run:
+I'm from a web graphics team, and _AssemblyScript_ seems like a nice tech to learn, so I decided to make a super simple audio visualizer with it.
 
-### `npm start`
+Here's how it looks like if you have this set up and running (except it'll be your face on the user icon and not mine, naturally):
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+![Project Glitter running in localhost](./docs/project-glitter-local-host.png)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+-   Live demo [can be found here](https://benglin.github.io/project-glitter/)
 
-### `npm test`
+## Environment setup
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Here's a list of what you need to set things up:
 
-### `npm run build`
+-   Recent build of Node.js: [download from the official site](https://nodejs.org/en/download/)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+-   Clone this repo: `https://github.com/Benglin/project-glitter.git`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+-   Navigate to `project-glitter` you've just cloned it to:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    ```sh
+    $ cd project-glitter
+    ```
 
-### `npm run eject`
+-   Within `project-glitter` directory, install node dependencies:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+    ```sh
+    $ npm install
+    ```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+-   Start the development server (which will launch a browser):
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+    ```sh
+    $ npm start
+    ```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## What's next?
 
-## Learn More
+A week is rather short to pick up a _new-ish language_ (I'm used to _TypeScript_), this project gives me a perfect opportunity to get my hands dirty with _AssemblyScript_ (and indirectly, a little bit of _WebAssembly_). I may not continue to work on this but who knows, if I ever find time to play with it further, I might.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+If you're like to chat, [drop me a line](mailto:benglin@outlook.com).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Meanwhile, have a good one! 😉
