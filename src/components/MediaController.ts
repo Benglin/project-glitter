@@ -48,7 +48,7 @@ export class MediaController extends EventTarget {
         const e = document.getElementById(this._audioElementId);
         const audioElement = e as HTMLAudioElement;
 
-        if (audioElement.paused) {
+        if (audioElement.paused || audioElement.ended) {
             audioElement.play();
         } else {
             audioElement.pause();

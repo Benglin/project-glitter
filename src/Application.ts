@@ -10,6 +10,7 @@ export class Application extends EventTarget {
     public static MediaReady = "media-ready";
 
     private _exports: any = null;
+    private _eventRegistered: boolean = false;
     private _mediaController: MediaController | null = null;
 
     public async initialize(): Promise<boolean> {
@@ -20,12 +21,16 @@ export class Application extends EventTarget {
         this._mediaController = new MediaController("audio-source");
         this._mediaController.loadMedia(this._resolveFilePath("Bajan-Canadian.mp3"));
         this._mediaController.addEventListener(MediaController.MediaReady, () => {
-            document.addEventListener("click", () => {
-                if (this._mediaController) {
-                    this._mediaController.connect();
-                    this._mediaController.play();
-                }
-            });
+            if (!this._eventRegistered) {
+                this._eventRegistered = true;
+
+                document.addEventListener("click", () => {
+                    if (this._mediaController) {
+                        this._mediaController.connect();
+                        this._mediaController.play();
+                    }
+                });
+            }
 
             this.dispatchEvent(new Event(Application.MediaReady));
         });
