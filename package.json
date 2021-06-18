@@ -2,6 +2,7 @@
     "name": "project-glitter",
     "version": "0.1.0",
     "private": true,
+    "homepage": "https://benglin.github.io/project-glitter",
     "dependencies": {
         "@assemblyscript/loader": "^0.19.2",
         "@testing-library/jest-dom": "^5.14.1",
@@ -28,9 +29,8 @@
         "eject": "react-scripts eject",
         "asbuild": "asc ./assembly/EntryPoint.ts --config ./assembly/asconfig.json --target debug",
         "asbuild-prod": "asc ./assembly/EntryPoint.ts --config ./assembly/asconfig.json --target release",
-        "homepage": "https://benglin.github.io/project-glitter",
         "predeploy": "npm run build",
-        "deploy": "gh-pages -d build"
+        "deploy": "gh-pages -d build -f"
     },
     "eslintConfig": {
         "extends": [

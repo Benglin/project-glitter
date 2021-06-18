@@ -38,7 +38,7 @@ export class Application {
 
         generateGlueCode(imports as any);
 
-        const response = await fetch("/renderer.wasm");
+        const response = await fetch(this._resolvePathFromRoot("renderer.wasm"));
         const wasmInstance = await loader.instantiateStreaming(response, imports);
         this._exports = wasmInstance.exports;
 
@@ -92,7 +92,11 @@ export class Application {
                 reject(event ? event.toString() : "");
             };
 
-            image.src = `/${resourceName}`;
+            image.src = this._resolvePathFromRoot(resourceName);
         });
+    }
+
+    private _resolvePathFromRoot(path: string): string {
+        return `${window.location.pathname}/${path}`;
     }
 }
