@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Application } from "../Application";
-import "./ApplicationView.css";
 
 function ApplicationView() {
     const applicationRef = useRef<Application>();
