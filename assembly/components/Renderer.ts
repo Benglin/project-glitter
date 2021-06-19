@@ -2,6 +2,7 @@ import { WebGLRenderingContext } from "../externals/WebGL";
 import { Particles } from "./Particles";
 
 export class Renderer {
+    private _prevFrameMs: i64 = Date.now();
     private _particles: Particles;
     private _gl: WebGLRenderingContext;
 
@@ -15,11 +16,15 @@ export class Renderer {
     }
 
     public updateFrame(): void {
-        this._particles.update(0);
+        const currFrameMs = Date.now();
+        const elapsedMs = currFrameMs - this._prevFrameMs;
+
+        this._prevFrameMs = currFrameMs;
+        this._particles.update(<f32>elapsedMs);
     }
 
     public renderFrame(): void {
-         // this._gl.clearColor(0.392, 0.584, 0.929, 1.0);
+        // this._gl.clearColor(0.392, 0.584, 0.929, 1.0);
         this._gl.clearColor(0.0, 0.0, 0.0, 1.0);
         this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
 
