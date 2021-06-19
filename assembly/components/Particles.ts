@@ -8,6 +8,7 @@ const vertexShaderCode: string = `
     precision highp float;
 
     uniform vec2 screenSize;
+    uniform float normalizedSecond;
     uniform float frequencies[128];
 
     attribute float serialNumber;
@@ -27,7 +28,9 @@ const vertexShaderCode: string = `
 
     void main()
     {
-        vec3 hsv = vec3((serialNumber / 128.0) * 2.0 * 3.14159265, 1.0, 1.0);
+        float fullCircle = 2.0 * 3.14159265;
+
+        vec3 hsv = vec3((serialNumber / 128.0) * fullCircle, 1.0, 1.0);
         vColor = hsv2rgb(hsv);
 
         float index = mod(serialNumber, 128.0);
@@ -40,8 +43,9 @@ const vertexShaderCode: string = `
         float xRadius = currSize / screenSize.x;
         float yRadius = currSize / screenSize.y;
 
-        float angleOffset = frequency * ((2.0 * 3.14159265) / 360.0) * 90.0;
-        float angle2 = angle + angleOffset;
+        float globalOffset = -1.0 * normalizedSecond * fullCircle * (22.5 / 360.0);
+        float angleOffset = frequency * (fullCircle / 360.0) * 90.0;
+        float angle2 = angle + angleOffset + globalOffset;
 
         vec2 position = vec2(xRadius * cos(angle2), yRadius * sin(angle2));
         float xOffset = (particleSize * 0.5) / screenSize.x;
@@ -158,6 +162,7 @@ class ParticleAttributes {
 }
 
 export class Particles {
+    private _elapsedMs: f32 = 0.0;
     private readonly _geometry: BufferGeometry;
     private readonly _shaderMaterial: ShaderMaterial;
     private readonly _texture: Texture;
@@ -178,6 +183,7 @@ export class Particles {
         this._shaderMaterial.activate();
         this._shaderMaterial.setUniform1i("uSampler", 0);
         this._shaderMaterial.setUniform2f("screenSize", screenWidth, screenHeight);
+        this._shaderMaterial.setUniform1f("normalizedSecond", 0.0);
 
         this._texture = new Texture(gl);
         this._texture.load("circle.png");
@@ -209,6 +215,14 @@ export class Particles {
             const f = <f32>this._frequencyUint8[i];
             this._frequencyFloat32[i] = <f32>(f / 255.0);
         }
+
+        this._elapsedMs += deltaMs;
+        while (this._elapsedMs > 1000.0) {
+            this._elapsedMs -= 1000.0;
+        }
+
+        const normalized = this._elapsedMs / 1000.0;
+        this._shaderMaterial.setUniform1f("normalizedSecond", normalized);
     }
 
     public render(): void {
