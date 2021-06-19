@@ -98,8 +98,13 @@ export function generateGlueCode(importObject: ImportObject): void {
         if (!element) throw new Error(`Invalid canvas id: ${canvasName}`);
 
         const canvas = element as HTMLCanvasElement;
+        const contextId = WebGL.__getString(contextType);
 
-        const context = canvas.getContext(WebGL.__getString(contextType));
+        let context = canvas.getContext(contextId);
+        if (!context && contextId === "webgl2") {
+            context = canvas.getContext("webgl"); // Downgrade if needed.
+        }
+
         const gl = context as WebGLRenderingContext;
         const maxVertexUniform = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
         const maxFragmentUniform = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
