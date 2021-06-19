@@ -69,14 +69,15 @@ export class Application extends EventTarget {
     public startRenderLoop(onFrameRateUpdated: OnFrameRateUpdatedFunc): void {
         const { updateFrame, renderFrame, getFrequencyBuffer, __getArrayView } = this._exports;
 
+        // These remains the same, keep out of loop to avoid JS-WASM transitions.
+        const bufferId = getFrequencyBuffer();
+        const buffer = __getArrayView(bufferId) as Uint8Array;
+
         let framesRendered = 0.0;
         let startMillisecond = Date.now();
 
         const thisObject = this;
         function renderFrameCore(): void {
-            const bufferId = getFrequencyBuffer();
-            const buffer = __getArrayView(bufferId) as Uint8Array;
-
             if (thisObject._mediaController) {
                 if (thisObject._mediaController.getByteFrequencyData(buffer)) {
                     updateFrame();
