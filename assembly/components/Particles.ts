@@ -30,7 +30,7 @@ const vertexShaderCode: string = `
         vec3 hsv = vec3((serialNumber / 128.0) * 2.0 * 3.14159265, 1.0, 1.0);
         vColor = hsv2rgb(hsv);
 
-        float index = abs((serialNumber * 2.0) - 127.0);
+        float index = mod(serialNumber, 128.0);
         float frequency = frequencies[int(index)];
         float particleSize = 16.0 + (24.0 * frequency); // Particle size in pixels.
 
@@ -40,7 +40,10 @@ const vertexShaderCode: string = `
         float xRadius = currSize / screenSize.x;
         float yRadius = currSize / screenSize.y;
 
-        vec2 position = vec2(xRadius * cos(angle), yRadius * sin(angle));
+        float angleOffset = frequency * ((2.0 * 3.14159265) / 360.0) * 90.0;
+        float angle2 = angle + angleOffset;
+
+        vec2 position = vec2(xRadius * cos(angle2), yRadius * sin(angle2));
         float xOffset = (particleSize * 0.5) / screenSize.x;
         float yOffset = (particleSize * 0.5) / screenSize.y;
         vec2 delta = vec2(offset.x * xOffset, offset.y * yOffset);
@@ -179,7 +182,7 @@ export class Particles {
         this._texture = new Texture(gl);
         this._texture.load("circle.png");
 
-        this._attributes = new ParticleAttributes(128);
+        this._attributes = new ParticleAttributes(2048);
 
         const serialNumber = this._attributes.serialNumber;
         const angle = this._attributes.angle;
