@@ -67,11 +67,11 @@ export class Application extends EventTarget {
     }
 
     public startRenderLoop(onFrameRateUpdated: OnFrameRateUpdatedFunc): void {
-        const { updateFrame, renderFrame, getFrequencyBuffer, __getArrayView } = this._exports;
+        const { updateFrame, renderFrame, getFrequencyBuffer, __getUint8ArrayView } = this._exports;
 
         // These remains the same, keep out of loop to avoid JS-WASM transitions.
         const bufferId = getFrequencyBuffer();
-        const buffer = __getArrayView(bufferId) as Uint8Array;
+        const buffer = __getUint8ArrayView(bufferId) as Uint8Array;
 
         let framesRendered = 0.0;
         let startMillisecond = Date.now();
