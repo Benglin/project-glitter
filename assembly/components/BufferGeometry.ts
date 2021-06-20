@@ -22,7 +22,7 @@ export class BufferAttribute {
      * @param {boolean} normalized Indicates how the underlying data in the buffer maps
      * to the values in the GLSL shader code.
      */
-    constructor(array: StaticArray<f32>, itemSize: i32, normalized: boolean) {
+    constructor(array: StaticArray<f32>, itemSize: i32, normalized: boolean = false) {
         this._staticArray = array;
         this._itemSize = itemSize;
         this._normalized = normalized;

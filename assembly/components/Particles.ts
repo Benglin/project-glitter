@@ -176,35 +176,38 @@ export class Particles {
 
     constructor(gl: WebGLRenderingContext) {
         this._shaderMaterial = new ShaderMaterial(gl);
-        this._shaderMaterial.compile(vertexShaderCode, fragmentShaderCode);
+        const shaderMaterial = this._shaderMaterial;
+
+        shaderMaterial.compile(vertexShaderCode, fragmentShaderCode);
 
         const screenWidth = <f32>gl.getDrawingBufferWidth();
         const screenHeight = <f32>gl.getDrawingBufferHeight();
 
-        this._shaderMaterial.activate();
-        this._shaderMaterial.setUniform1i("uSampler", 0);
-        this._shaderMaterial.setUniform2f("screenSize", screenWidth, screenHeight);
-        this._shaderMaterial.setUniform1f("normalizedSecond", 0.0);
+        shaderMaterial.activate();
+        shaderMaterial.setUniform1i("uSampler", 0);
+        shaderMaterial.setUniform2f("screenSize", screenWidth, screenHeight);
+        shaderMaterial.setUniform1f("normalizedSecond", 0.0);
 
-        this._texture = new Texture(gl);
-        this._texture.load("circle.png");
-
+        this._texture = new Texture(gl).load("circle.png");
+        this._geometry = new BufferGeometry(gl);
         this._attributes = new ParticleAttributes(2048);
 
-        const serialNumber = this._attributes.serialNumber;
-        const angle = this._attributes.angle;
-        const offset = this._attributes.offset;
-        const texCoord = this._attributes.texCoord;
+        const geometry = this._geometry;
+        const attributes = this._attributes;
 
-        this._geometry = new BufferGeometry(gl);
-        this._geometry.setAttribute("serialNumber", new BufferAttribute(serialNumber, 1, false));
-        this._geometry.setAttribute("angle", new BufferAttribute(angle, 1, false));
-        this._geometry.setAttribute("offset", new BufferAttribute(offset, 2, false));
-        this._geometry.setAttribute("texCoord", new BufferAttribute(texCoord, 2, false));
+        const serialNumber = attributes.serialNumber;
+        const angle = attributes.angle;
+        const offset = attributes.offset;
+        const texCoord = attributes.texCoord;
 
-        this._geometry.setIndexBuffer(this._attributes.indices);
+        geometry.setAttribute("serialNumber", new BufferAttribute(serialNumber, 1));
+        geometry.setAttribute("angle", new BufferAttribute(angle, 1));
+        geometry.setAttribute("offset", new BufferAttribute(offset, 2));
+        geometry.setAttribute("texCoord", new BufferAttribute(texCoord, 2));
 
-        this._triangleMesh = new Mesh(gl, this._geometry, this._shaderMaterial);
+        geometry.setIndexBuffer(attributes.indices);
+
+        this._triangleMesh = new Mesh(gl, geometry, shaderMaterial);
     }
 
     public getFrequencyBuffer(): Uint8Array {
