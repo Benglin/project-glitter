@@ -33,7 +33,8 @@ const vertexShaderCode: string = `
         vec3 hsv = vec3((serialNumber * (1.0 / 128.0)) * fullCircle, 1.0, 1.0);
         vColor = hsv2rgb(hsv);
 
-        float frequency = frequencies[int(serialNumber) & 127];
+        float index = mod(serialNumber, 128.0);
+        float frequency = frequencies[int(index)];
         float particleSize = 16.0 + 24.0 * frequency; // Particle size in pixels.
 
         float minSize = min(screenSize.x, screenSize.y) * 0.95;
