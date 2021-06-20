@@ -30,24 +30,26 @@ const vertexShaderCode: string = `
     {
         float fullCircle = 2.0 * 3.14159265;
 
-        vec3 hsv = vec3((serialNumber / 128.0) * fullCircle, 1.0, 1.0);
+        vec3 hsv = vec3((serialNumber * (1.0 / 128.0)) * fullCircle, 1.0, 1.0);
         vColor = hsv2rgb(hsv);
 
-        float index = mod(serialNumber, 128.0);
-        float frequency = frequencies[int(index)];
-        float particleSize = 16.0 + (24.0 * frequency); // Particle size in pixels.
+        float frequency = frequencies[int(serialNumber) & 127];
+        float particleSize = 16.0 + 24.0 * frequency; // Particle size in pixels.
 
-        float minSize = (screenSize.x < screenSize.y ? screenSize.x : screenSize.y) * 0.95;
-        float currSize = minSize * (0.5 + (frequency * 0.5));
+        float minSize = min(screenSize.x, screenSize.y) * 0.95;
+        float currSize = minSize * (0.5 + frequency * 0.5);
 
         float xRadius = currSize / screenSize.x;
         float yRadius = currSize / screenSize.y;
 
         float globalOffset = -1.0 * normalizedSecond * fullCircle * (22.5 / 360.0);
-        float angleOffset = frequency * (fullCircle / 360.0) * 90.0;
+        float angleOffset = frequency * fullCircle * (90.0 / 360.0);
         float angle2 = angle + angleOffset + globalOffset;
 
-        vec2 position = vec2(xRadius * cos(angle2), yRadius * sin(angle2));
+        vec2 position = vec2(
+            xRadius * cos(angle2),
+            yRadius * sin(angle2)
+        );
         float xOffset = (particleSize * 0.5) / screenSize.x;
         float yOffset = (particleSize * 0.5) / screenSize.y;
         vec2 delta = vec2(offset.x * xOffset, offset.y * yOffset);

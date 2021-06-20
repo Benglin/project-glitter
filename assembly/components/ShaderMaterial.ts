@@ -3,12 +3,11 @@ import { Object3D } from "./Object3D";
 import { Texture } from "./Texture";
 
 export class ShaderMaterial extends Object3D {
-    private readonly _uniformLocations: Map<string, i32>;
+    private readonly _uniformLocations: Map<string, i32> = new Map();
     private _program: WebGLProgram = -1;
 
     constructor(gl: WebGLRenderingContext) {
         super(gl);
-        this._uniformLocations = new Map<string, i32>();
     }
 
     public compile(vertexShaderCode: string, fragmentShaderCode: string): void {
