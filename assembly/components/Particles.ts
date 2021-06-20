@@ -39,21 +39,15 @@ const vertexShaderCode = `
 
         float minSize = min(screenSize.x, screenSize.y) * 0.95;
         float currSize = minSize * (0.5 + frequency * 0.5);
-
-        float xRadius = currSize / screenSize.x;
-        float yRadius = currSize / screenSize.y;
+        vec2 radius = vec2(currSize) / screenSize;
 
         float globalOffset = normalizedSecond * fullCircle * (22.5 / 360.0);
         float angleOffset = frequency * fullCircle * (90.0 / 360.0);
         float angle2 = angle + angleOffset - globalOffset;
 
-        vec2 position = vec2(
-            xRadius * cos(angle2),
-            yRadius * sin(angle2)
-        );
-        float xOffset = (particleSize * 0.5) / screenSize.x;
-        float yOffset = (particleSize * 0.5) / screenSize.y;
-        vec2 delta = vec2(offset.x * xOffset, offset.y * yOffset);
+        vec2 position = radius * vec2(cos(angle2), sin(angle2));
+        vec2 localOffset = vec2(particleSize * 0.5) / screenSize;
+        vec2 delta = localOffset * offset;
 
         vTexCoord = texCoord;
         gl_Position = vec4(position + delta, 0.0, 1.0);
