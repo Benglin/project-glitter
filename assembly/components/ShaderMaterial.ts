@@ -1,4 +1,4 @@
-import { WebGLProgram, WebGLRenderingContext } from "../externals/WebGL";
+import { WebGLProgram } from "../externals/WebGL";
 import { Object3D } from "./Object3D";
 import { Texture } from "./Texture";
 

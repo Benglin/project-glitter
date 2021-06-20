@@ -1,4 +1,4 @@
-import { WebGLBuffer, WebGLRenderingContext } from "../externals/WebGL";
+import { WebGLBuffer } from "../externals/WebGL";
 import { Object3D } from "./Object3D";
 
 export class BufferAttribute {

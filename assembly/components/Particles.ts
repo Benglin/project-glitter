@@ -4,7 +4,7 @@ import { Mesh } from "./Mesh";
 import { ShaderMaterial } from "./ShaderMaterial";
 import { Texture } from "./Texture";
 
-const vertexShaderCode: string = `
+const vertexShaderCode = `
     precision highp float;
 
     uniform vec2 screenSize;
@@ -60,7 +60,7 @@ const vertexShaderCode: string = `
     }
 `;
 
-const fragmentShaderCode: string = `
+const fragmentShaderCode = `
     precision highp float;
 
     uniform sampler2D uSampler;
@@ -214,8 +214,9 @@ export class Particles {
     }
 
     public update(deltaMs: f32): void {
-        for (let i = 0, len = this._frequencyUint8.length; i < len; ++i) {
-            const f = <f32>this._frequencyUint8[i];
+        const frequencies = this._frequencyUint8;
+        for (let i = 0, len = frequencies.length; i < len; ++i) {
+            const f = <f32>frequencies[i];
             this._frequencyFloat32[i] = f / (255.0 as f32);
         }
 
