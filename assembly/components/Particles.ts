@@ -43,9 +43,9 @@ const vertexShaderCode: string = `
         float xRadius = currSize / screenSize.x;
         float yRadius = currSize / screenSize.y;
 
-        float globalOffset = -1.0 * normalizedSecond * fullCircle * (22.5 / 360.0);
+        float globalOffset = normalizedSecond * fullCircle * (22.5 / 360.0);
         float angleOffset = frequency * fullCircle * (90.0 / 360.0);
-        float angle2 = angle + angleOffset + globalOffset;
+        float angle2 = angle + angleOffset - globalOffset;
 
         vec2 position = vec2(
             xRadius * cos(angle2),
