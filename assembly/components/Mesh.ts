@@ -20,8 +20,8 @@ export class Mesh extends Object3D {
         const material = this._material;
         const attributes = geometry.attributes;
 
-        let vertices: i32 = 3;
-        for (let i = 0; i < attributes.length; i++) {
+        let vertices = 3;
+        for (let i = 0, len = attributes.length; i < len; i++) {
             const attribName = attributes[i];
             const attribute = geometry.getAttribute(attribName);
             if (!attribute) return;
@@ -45,7 +45,7 @@ export class Mesh extends Object3D {
             }
 
             const loc = attribute.location;
-            gl.vertexAttribPointer(loc, itemSize, gl.FLOAT, +normalized, stride, offset);
+            gl.vertexAttribPointer(loc, itemSize, gl.FLOAT, i32(normalized), stride, offset);
             gl.enableVertexAttribArray(loc);
         }
 

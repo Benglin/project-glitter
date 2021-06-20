@@ -4,7 +4,7 @@ import { Mesh } from "./Mesh";
 import { ShaderMaterial } from "./ShaderMaterial";
 import { Texture } from "./Texture";
 
-const vertexShaderCode: string = `
+const vertexShaderCode = `
     precision highp float;
 
     attribute vec2 position;
@@ -21,7 +21,7 @@ const vertexShaderCode: string = `
     }
 `;
 
-const fragmentShaderCode: string = `
+const fragmentShaderCode = `
     precision highp float;
 
     uniform float uAlpha;

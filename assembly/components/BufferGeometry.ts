@@ -1,4 +1,4 @@
-import { WebGLBuffer, WebGLRenderingContext } from "../externals/WebGL";
+import { WebGLBuffer } from "../externals/WebGL";
 import { Object3D } from "./Object3D";
 
 export class BufferAttribute {
@@ -22,7 +22,7 @@ export class BufferAttribute {
      * @param {boolean} normalized Indicates how the underlying data in the buffer maps
      * to the values in the GLSL shader code.
      */
-    constructor(array: StaticArray<f32>, itemSize: i32, normalized: boolean) {
+    constructor(array: StaticArray<f32>, itemSize: i32, normalized: boolean = false) {
         this._staticArray = array;
         this._itemSize = itemSize;
         this._normalized = normalized;
@@ -55,10 +55,6 @@ export class BufferGeometry extends Object3D {
     private readonly _buffers: Map<string, WebGLBuffer> = new Map();
     private readonly _attributes: Map<string, BufferAttribute> = new Map();
 
-    constructor(gl: WebGLRenderingContext) {
-        super(gl);
-    }
-
     public get attributes(): string[] {
         return this._attributes.keys();
     }
@@ -76,7 +72,9 @@ export class BufferGeometry extends Object3D {
             return 0;
         }
 
-        if (!this._buffers.has(name)) {
+        const buffers = this._buffers;
+
+        if (!buffers.has(name)) {
             const gl = this.gl;
 
             // TODO: Update 'bufferData' to use Float32Array?
@@ -86,10 +84,10 @@ export class BufferGeometry extends Object3D {
             gl.bindBuffer(gl.ARRAY_BUFFER, newBuffer);
             gl.bufferData<f32>(gl.ARRAY_BUFFER, staticArray, gl.STATIC_DRAW);
 
-            this._buffers.set(name, newBuffer);
+            buffers.set(name, newBuffer);
         }
 
-        return this._buffers.get(name);
+        return buffers.get(name);
     }
 
     public setIndexBuffer(array: StaticArray<u16>): void {
