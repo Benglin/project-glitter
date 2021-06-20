@@ -30,7 +30,7 @@ const vertexShaderCode = `
     {
         float fullCircle = 2.0 * 3.14159265;
 
-        vec3 hsv = vec3((serialNumber * (1.0 / 128.0)) * fullCircle, 1.0, 1.0);
+        vec3 hsv = vec3(serialNumber * (fullCircle / 128.0), 1.0, 1.0);
         vColor = hsv2rgb(hsv);
 
         float index = mod(serialNumber, 128.0);
@@ -38,19 +38,18 @@ const vertexShaderCode = `
         float particleSize = 16.0 + 24.0 * frequency; // Particle size in pixels.
 
         float minSize = min(screenSize.x, screenSize.y) * 0.95;
-        float currSize = minSize * (0.5 + frequency * 0.5);
-        vec2 radius = vec2(currSize) / screenSize;
+        vec2 radius = vec2(minSize * (0.5 + frequency * 0.5));
 
         float globalOffset = normalizedSecond * fullCircle * (22.5 / 360.0);
         float angleOffset = frequency * fullCircle * (90.0 / 360.0);
         float angle2 = angle + angleOffset - globalOffset;
 
         vec2 position = radius * vec2(cos(angle2), sin(angle2));
-        vec2 localOffset = vec2(particleSize * 0.5) / screenSize;
+        vec2 localOffset = vec2(particleSize * 0.5);
         vec2 delta = localOffset * offset;
 
         vTexCoord = texCoord;
-        gl_Position = vec4(position + delta, 0.0, 1.0);
+        gl_Position = vec4((position + delta) / screenSize, 0.0, 1.0);
     }
 `;
 
