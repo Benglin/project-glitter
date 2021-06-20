@@ -6,10 +6,6 @@ export class ShaderMaterial extends Object3D {
     private readonly _uniformLocations: Map<string, i32> = new Map();
     private _program: WebGLProgram = -1;
 
-    constructor(gl: WebGLRenderingContext) {
-        super(gl);
-    }
-
     public compile(vertexShaderCode: string, fragmentShaderCode: string): void {
         if (this._program >= 0) {
             throw new Error(`Material has been compiled before`);
@@ -77,11 +73,13 @@ export class ShaderMaterial extends Object3D {
             throw new Error(`Invalid program to set uniform: ${uniformName}`);
         }
 
-        if (!this._uniformLocations.has(uniformName)) {
+        const uniformLocations = this._uniformLocations;
+
+        if (!uniformLocations.has(uniformName)) {
             const loc = this.gl.getUniformLocation(this._program, uniformName);
-            this._uniformLocations.set(uniformName, loc);
+            uniformLocations.set(uniformName, loc);
         }
 
-        return this._uniformLocations.get(uniformName);
+        return uniformLocations.get(uniformName);
     }
 }

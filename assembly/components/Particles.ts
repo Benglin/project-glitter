@@ -214,9 +214,9 @@ export class Particles {
     }
 
     public update(deltaMs: f32): void {
-        for (let i = 0; i < this._frequencyUint8.length; ++i) {
+        for (let i = 0, len = this._frequencyUint8.length; i < len; ++i) {
             const f = <f32>this._frequencyUint8[i];
-            this._frequencyFloat32[i] = <f32>(f / 255.0);
+            this._frequencyFloat32[i] = f / (255.0 as f32);
         }
 
         this._elapsedMs += deltaMs;
