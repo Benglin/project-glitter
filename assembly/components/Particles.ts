@@ -119,7 +119,7 @@ class ParticleAttributes {
         const baseIndex = particleIndex * 4;
 
         // Things that are common to all four corners of a particle.
-        const f = particleIndex * Math.PI * 2.0;
+        const f = particleIndex * (Math.PI * 2.0);
         const angle = <f32>(f / this._particleCount);
         for (let i = 0; i < 4; ++i) {
             this._angle[baseIndex + i] = angle;
@@ -175,9 +175,7 @@ export class Particles {
     private readonly _frequencyFloat32: StaticArray<f32> = new StaticArray<f32>(128);
 
     constructor(gl: WebGLRenderingContext) {
-        this._shaderMaterial = new ShaderMaterial(gl);
-        const shaderMaterial = this._shaderMaterial;
-
+        const shaderMaterial = this._shaderMaterial = new ShaderMaterial(gl);
         shaderMaterial.compile(vertexShaderCode, fragmentShaderCode);
 
         const screenWidth = <f32>gl.getDrawingBufferWidth();
@@ -189,11 +187,8 @@ export class Particles {
         shaderMaterial.setUniform1f("normalizedSecond", 0.0);
 
         this._texture = new Texture(gl).load("circle.png");
-        this._geometry = new BufferGeometry(gl);
-        this._attributes = new ParticleAttributes(2048);
-
-        const geometry = this._geometry;
-        const attributes = this._attributes;
+        const geometry = this._geometry = new BufferGeometry(gl);
+        const attributes = this._attributes = new ParticleAttributes(2048);
 
         const serialNumber = attributes.serialNumber;
         const angle = attributes.angle;
