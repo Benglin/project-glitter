@@ -9,6 +9,7 @@ const vertexShaderCode = `
 
     #define PI            3.14159265359
     #define TWO_PI        PI * 2.0
+    #define TO_RAD(x)     (x) * (TWO_PI / 360.0)
 
     #define FREQ_COUNT    128
     #define FREQ_COUNT_F  float(FREQ_COUNT)
@@ -44,8 +45,8 @@ const vertexShaderCode = `
         float minSize = min(screenSize.x, screenSize.y) * 0.95;
         vec2 radius = vec2(minSize * (0.5 + frequency * 0.5));
 
-        float globalOffset = normalizedSecond * (22.5 * TWO_PI / 360.0);
-        float angleOffset = frequency * (90.0 * TWO_PI / 360.0);
+        float globalOffset = normalizedSecond * TO_RAD(22.5);
+        float angleOffset = frequency * TO_RAD(90.0);
         float angle2 = angle + angleOffset - globalOffset;
 
         vec2 position = radius * vec2(cos(angle2), sin(angle2));
