@@ -35,10 +35,10 @@ const vertexShaderCode: string = `
 
         float index = mod(serialNumber, 128.0);
         float frequency = frequencies[int(index)];
-        float particleSize = 16.0 + (24.0 * frequency); // Particle size in pixels.
+        float particleSize = 4.0 + (64.0 * frequency); // Particle size in pixels.
 
-        float minSize = (screenSize.x < screenSize.y ? screenSize.x : screenSize.y) * 0.95;
-        float currSize = minSize * (0.5 + (frequency * 0.5));
+        float minSize = (screenSize.x < screenSize.y ? screenSize.x : screenSize.y) * 0.92;
+        float currSize = minSize * (0.25 + (frequency * 0.75));
 
         float xRadius = currSize / screenSize.x;
         float yRadius = currSize / screenSize.y;
