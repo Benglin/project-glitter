@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/project-glitter/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/project-glitter/static/js/main.65f10003.chunk.js",
+    "main.js.map": "/project-glitter/static/js/main.65f10003.chunk.js.map",
+    "runtime-main.js": "/project-glitter/static/js/runtime-main.f13115e7.js",
+    "runtime-main.js.map": "/project-glitter/static/js/runtime-main.f13115e7.js.map",
+    "static/js/2.3ab5abcb.chunk.js": "/project-glitter/static/js/2.3ab5abcb.chunk.js",
+    "static/js/2.3ab5abcb.chunk.js.map": "/project-glitter/static/js/2.3ab5abcb.chunk.js.map",
+    "static/js/3.0c7063ef.chunk.js": "/project-glitter/static/js/3.0c7063ef.chunk.js",
+    "static/js/3.0c7063ef.chunk.js.map": "/project-glitter/static/js/3.0c7063ef.chunk.js.map",
+    "index.html": "/project-glitter/index.html",
+    "static/css/main.6dea0f05.chunk.css.map": "/project-glitter/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.3ab5abcb.chunk.js.LICENSE.txt": "/project-glitter/static/js/2.3ab5abcb.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f13115e7.js",
+    "static/js/2.3ab5abcb.chunk.js",
+    "static/css/main.6dea0f05.chunk.css",
+    "static/js/main.65f10003.chunk.js"
+  ]
+}
